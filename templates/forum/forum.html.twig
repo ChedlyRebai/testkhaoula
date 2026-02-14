@@ -1,0 +1,1402 @@
+{% extends 'front/base_front.html.twig' %}
+
+{% set forum = forum ?? post ?? null %}
+{% set forums = forums ?? posts ?? [] %}
+{% set is_single = forum is not null %}
+{% set is_edit = is_edit ?? false %}
+
+{% block title %}
+    {% if is_edit %}
+        Edit Topic - Forum
+    {% elseif is_single %}
+        {{ forum.title }} - Forum
+    {% else %}
+        Forum - Discussion Board
+    {% endif %}
+{% endblock %}
+
+{% block body %}
+<div class="container my-5">
+    {% if is_single and not is_edit %}
+        {# ============ SINGLE POST VIEW ============ #}
+        
+        <!-- Profile Bar -->
+        <div class="row mb-4">
+            <div class="col-lg-8 offset-lg-2">
+                <div class="profile-bar card p-3 bg-light" style="border-radius: 8px; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);">
+                    <div class="d-flex align-items-center">
+                        <i class="fa fa-user-circle" style="font-size: 40px; color: #007bff; margin-right: 15px;"></i>
+                        <div>
+                            <strong id="current-user-name">Anonyme</strong>
+                            <br>
+                            <small class="text-muted">Connecté en tant que</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-8 offset-lg-2">
+                <!-- Post Card -->
+                <div class="card facebook-post mb-4">
+                    <!-- Post Header -->
+                    <div class="card-header bg-white border-bottom">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="d-flex align-items-center">
+                                <i class="fa fa-user-circle" style="font-size: 40px; color: #007bff; margin-right: 10px;"></i>
+                                <div>
+                                    <h6 class="mb-0"><strong>{{ forum.author }}</strong></h6>
+                                    <small class="text-muted">
+                                        <i class="fa fa-calendar"></i> {{ forum.createdAt|date('d/m/Y H:i') }}
+                                        {% if forum.updatedAt %}
+                                            <br><em style="font-size: 12px;">(Edited: {{ forum.updatedAt|date('d/m/Y H:i') }})</em>
+                                        {% endif %}
+                                    </small>
+                                </div>
+                            </div>
+                            <div class="dropdown">
+                                <button class="btn btn-sm btn-link text-muted dropdown-toggle" type="button" id="dropdownMenu{{ forum.id }}" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="pointer-events: auto;">
+                                    <i class="fa fa-ellipsis-h"></i>
+                                </button>
+                                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenu{{ forum.id }}" style="min-width: 150px;">
+                                    <a class="dropdown-item" href="{{ path('app_forum_edit', {'id': forum.id}) }}">
+                                        <i class="fa fa-edit"></i> Edit
+                                    </a>
+                                    <form action="{{ path('app_forum_delete', {'id': forum.id}) }}" method="POST" style="display:inline;">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ forum.id) }}">
+                                        <button type="submit" class="dropdown-item text-danger" onclick="return confirm('Delete this post?')">
+                                            <i class="fa fa-trash"></i> Delete
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Post Content -->
+                    <div class="card-body">
+                        <h3 class="card-title mb-3"><strong>{{ forum.title }}</strong></h3>
+                        <p class="card-text" style="line-height: 1.8; font-size: 16px;">{{ forum.content|nl2br }}</p>
+                        {% if forum.image %}
+                            <div class="mt-4">
+                                <img src="{{ forum.image }}" alt="{{ forum.title }}" class="img-fluid rounded" style="max-height: 500px; width: 100%; object-fit: cover;">
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Post Stats -->
+                    <div class="card-body border-top border-bottom py-2 bg-light">
+                        <small class="text-muted d-flex justify-content-between">
+                            <span>
+                                <span class="mr-3"><i class="fa fa-eye"></i> {{ forum.views }} views</span>
+                                <span class="mr-3"><i class="fa fa-comments"></i> {{ forum.commentaires|length }} comments</span>
+                            </span>
+                            <span class="reaction-summary" data-forum-id="{{ forum.id }}">
+                                {% set reactionCounts = forum.getReactionCounts() %}
+                                {% if reactionCounts.like > 0 or reactionCounts.love > 0 or reactionCounts.haha > 0 or reactionCounts.wow > 0 or reactionCounts.sad > 0 or reactionCounts.angry > 0 %}
+                                    {% if reactionCounts.like > 0 %}<span title="Like">👍</span>{% endif %}
+                                    {% if reactionCounts.love > 0 %}<span title="Love">❤️</span>{% endif %}
+                                    {% if reactionCounts.haha > 0 %}<span title="Haha">😆</span>{% endif %}
+                                    {% if reactionCounts.wow > 0 %}<span title="Wow">😮</span>{% endif %}
+                                    {% if reactionCounts.sad > 0 %}<span title="Sad">😢</span>{% endif %}
+                                    {% if reactionCounts.angry > 0 %}<span title="Angry">😠</span>{% endif %}
+                                {% endif %}
+                            </span>
+                        </small>
+                    </div>
+
+                    <!-- Post Actions -->
+                    <div class="card-body bg-light py-2">
+                        <div class="row text-center">
+                            <div class="col-12 col-md-auto">
+                                <div class="reaction-button-group d-inline-flex" data-forum-id="{{ forum.id }}">
+                                    <button class="btn btn-link text-muted reaction-btn p-2" data-type="like" title="Like" style="font-size: 20px; flex: 0 0 auto;">👍</button>
+                                    <button class="btn btn-link text-muted reaction-btn p-2" data-type="love" title="Love" style="font-size: 20px; flex: 0 0 auto;">❤️</button>
+                                    <button class="btn btn-link text-muted reaction-btn p-2" data-type="haha" title="Haha" style="font-size: 20px; flex: 0 0 auto;">😆</button>
+                                    <button class="btn btn-link text-muted reaction-btn p-2" data-type="wow" title="Wow" style="font-size: 20px; flex: 0 0 auto;">😮</button>
+                                    <button class="btn btn-link text-muted reaction-btn p-2" data-type="sad" title="Sad" style="font-size: 20px; flex: 0 0 auto;">😢</button>
+                                    <button class="btn btn-link text-muted reaction-btn p-2" data-type="angry" title="Angry" style="font-size: 20px; flex: 0 0 auto;">😠</button>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <button class="btn btn-link text-muted w-100" data-toggle="collapse" data-target="#comments">
+                                    <i class="fa fa-comment"></i> Comment
+                                </button>
+                            </div>
+                            <div class="col">
+                                <button class="btn btn-link text-muted w-100">
+                                    <i class="fa fa-share"></i> Share
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Comments Section -->
+                    <div class="card-body border-top" id="comments">
+                                <!-- Existing Comments -->
+                                {% if forum.commentaires|length > 0 %}
+                                    <div class="comments-list mb-3">
+                                        {% for comment in forum.commentaires %}
+                                            <div class="comment mb-3 p-2" style="background-color: #f0f2f5; border-radius: 8px;" data-author="{{ comment.author|e('js') }}">
+                                        <div class="d-flex">
+                                            <i class="fa fa-user-circle" style="font-size: 32px; color: #007bff; margin-right: 10px;"></i>
+                                            <div class="flex-grow-1">
+                                                <h6 class="mb-0"><strong>{{ comment.author }}</strong></h6>
+                                                <p class="mb-1" style="font-size: 14px;">{{ comment.content }}</p>
+                                                <small class="text-muted d-flex justify-content-between">
+                                                    <span>{{ comment.createdAt|date('d/m/Y H:i') }}
+                                                        {% if comment.updatedAt and comment.updatedAt != comment.createdAt %}
+                                                            <em style="font-size: 11px; margin-left: 10px;">(Edited: {{ comment.updatedAt|date('d/m/Y H:i') }})</em>
+                                                        {% endif %}
+                                                    </span>
+                                                    <div class="comment-reactions" data-comment-id="{{ comment.id }}">
+                                                        <button class="btn btn-link btn-sm p-0 ml-2 comment-reaction-btn" data-type="like" style="font-size: 14px;">👍</button>
+                                                        <button class="btn btn-link btn-sm p-0 ml-1 comment-reaction-btn" data-type="love" style="font-size: 14px;">❤️</button>
+                                                        <button class="btn btn-link btn-sm p-0 ml-1 comment-reaction-btn" data-type="haha" style="font-size: 14px;">😆</button>
+                                                        <button class="btn btn-link btn-sm p-0 ml-1 comment-reaction-btn" data-type="wow" style="font-size: 14px;">😮</button>
+                                                        <button class="btn btn-link btn-sm p-0 ml-1 comment-reaction-btn" data-type="sad" style="font-size: 14px;">😢</button>
+                                                        <button class="btn btn-link btn-sm p-0 ml-1 comment-reaction-btn" data-type="angry" style="font-size: 14px;">😠</button>
+                                                    </div>
+                                                </small>
+                                            </div>
+                                            <div class="dropdown" style="margin-left: auto;">
+                                                <button class="btn btn-sm btn-link text-muted dropdown-toggle" type="button" id="dropdownComment{{ comment.id }}" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="pointer-events: auto;">
+                                                    <i class="fa fa-ellipsis-h"></i>
+                                                </button>
+                                                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownComment{{ comment.id }}" style="min-width: 130px;">
+                                                    <button class="dropdown-item edit-comment-btn" data-comment-id="{{ comment.id }}" type="button">
+                                                        <i class="fa fa-edit"></i> Edit
+                                                    </button>
+                                                    <button class="dropdown-item text-danger delete-comment" data-comment-id="{{ comment.id }}" type="button">
+                                                        <i class="fa fa-trash"></i> Delete
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+
+                        <!-- Add Comment Form -->
+                        <div class="add-comment mt-3 pt-3 border-top">
+                            <form class="comment-form" data-forum-id="{{ forum.id }}">
+                                <div class="input-group">
+                                    <input type="text" class="form-control comment-content" placeholder="Écrivez un commentaire..." style="border-radius: 20px 0 0 20px;">
+                                    <div class="input-group-append">
+                                        <button class="btn btn-primary" type="submit" style="border-radius: 0 20px 20px 0;">
+                                            <i class="fa fa-paper-plane"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Back Button -->
+                <a href="{{ path('app_forum_index') }}" class="btn btn-secondary btn-lg w-100">
+                    <i class="fa fa-arrow-left"></i> Back to Forum
+                </a>
+            </div>
+        </div>
+
+    {% elseif is_edit %}
+        {# ============ EDIT FORM VIEW ============ #}
+        
+        <div class="row">
+            <div class="col-lg-8 offset-lg-2">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h4 class="mb-0"><i class="fa fa-edit"></i> Edit Discussion Topic</h4>
+                    </div>
+                    
+                    <div class="card-body">
+                        <form id="forum-edit-form" action="{{ path('app_forum_edit', {'id': forum.id}) }}" method="POST" enctype="multipart/form-data">
+                            {# Author is taken from profile (localStorage) - hidden field #}
+                            <input type="hidden" id="author" name="author" value="{{ forum.author }}">
+
+                            <div class="form-group mb-3">
+                                <label for="title" class="form-label"><strong>Topic Title *</strong></label>
+                                <input type="text" class="form-control form-control-lg" id="title" name="title" value="{{ forum.title }}">
+                                <div class="invalid-feedback" style="display:block; color:#dc3545; font-size:12px; margin-top:4px;">{{ (errors.title is defined) ? errors.title|join(', ') : '' }}</div>
+                            </div>
+
+                            <div class="form-group mb-4">
+                                <label for="content" class="form-label"><strong>Content *</strong></label>
+                                <textarea class="form-control" id="content" name="content" rows="10">{{ forum.content }}</textarea>
+                                <div class="invalid-feedback" style="display:block; color:#dc3545; font-size:12px; margin-top:4px;">{{ (errors.content is defined) ? errors.content|join(', ') : '' }}</div>
+                            </div>
+
+                            <div class="form-group mb-4">
+                                <label for="link" class="form-label"><strong>External Link (Optional)</strong></label>
+                                {# If forum.image contains an external URL (starts with http), use it as the link value #}
+                                <input type="text" class="form-control" id="link" name="link" placeholder="https://example.com/article-or-image" value="{{ forum.image is not empty and forum.image|slice(0,4) == 'http' ? forum.image : '' }}">
+                                <div class="invalid-feedback" style="display:block; color:#dc3545; font-size:12px; margin-top:4px;">{{ (errors.link is defined) ? errors.link|join(', ') : '' }}</div>
+                                <small class="text-muted">If provided, it will be attached to the post (image or link).</small>
+                            </div>
+
+                            <div class="form-group mb-4">
+                                <label for="post_image" class="form-label"><strong>Replace Image (Optional)</strong></label>
+                                <input type="file" class="form-control" id="post_image" name="post_image" accept="image/*">
+                                <small class="text-muted">Upload a new image to replace the current one.</small>
+                            </div>
+
+                            <div class="form-group">
+                                <button type="submit" class="btn btn-primary btn-lg w-100">
+                                    <i class="fa fa-save"></i> Update Topic
+                                </button>
+                                <a href="{{ path('app_forum_show', {'id': forum.id}) }}" class="btn btn-secondary btn-lg w-100 mt-2">
+                                    <i class="fa fa-arrow-left"></i> Cancel
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    {% else %}
+        {# ============ FORUM LIST VIEW ============ #}
+        
+        <!-- Profile Bar -->
+        <div class="row mb-4">
+            <div class="col-lg-8 offset-lg-2">
+                <div class="profile-bar card p-3 bg-light" style="border-radius: 8px; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);">
+                    <div class="d-flex align-items-center">
+                        <i class="fa fa-user-circle" style="font-size: 40px; color: #007bff; margin-right: 15px;"></i>
+                        <div>
+                            <strong id="current-user-name">Anonyme</strong>
+                            <br>
+                            <small class="text-muted">Connecté en tant que</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-8 offset-lg-2">
+                <!-- Create Post Section -->
+                <div class="card mb-4 facebook-post-create">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="user-avatar mr-3">
+                                <i class="fa fa-user-circle" style="font-size: 40px; color: #007bff;"></i>
+                            </div>
+                            <div class="flex-grow-1">
+                                <button id="open-create-post-modal" class="form-control" style="background-color: #f0f2f5; border: none; cursor: pointer; color: #65676b; text-align: left;">
+                                    What's on your mind?
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Search / Filters -->
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <div class="d-flex gap-2 align-items-center flex-wrap">
+                            <input id="search-author" class="form-control" type="text" placeholder="Nom d'utilisateur" style="max-width: 280px;">
+                            <button id="search-btn" class="btn btn-primary">Rechercher</button>
+                            <button id="reset-btn" class="btn btn-light">Réinitialiser</button>
+                        </div>
+                        <div class="d-flex gap-2 align-items-center flex-wrap mt-3">
+                            <label class="mb-0" style="font-weight: bold;">Trier par:</label>
+                            <button id="sort-comments-desc" class="btn btn-outline-secondary btn-sm">📝 Plus de commentaires</button>
+                            <button id="sort-comments-asc" class="btn btn-outline-secondary btn-sm">📝 Moins de commentaires</button>
+                            <button id="sort-views-desc" class="btn btn-outline-secondary btn-sm">👁️ Plus de vues</button>
+                            <button id="sort-views-asc" class="btn btn-outline-secondary btn-sm">👁️ Moins de vues</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Posts Feed -->
+                <div id="posts-container">
+                {% if forums|length > 0 %}
+                    {% for forum in forums %}
+                        <div class="card mb-4 facebook-post" data-id="{{ forum.id }}" data-title="{{ forum.title|e('js') }}" data-content="{{ forum.content|striptags|e('js') }}" data-author="{{ forum.author|e('js') }}" data-created="{{ forum.createdAt ? forum.createdAt|date('c') : '' }}" data-tags="{{ forum.tags|default('')|e('js') }}">
+                            <!-- Post Header -->
+                            <div class="card-header bg-white border-bottom">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="d-flex align-items-center">
+                                        <i class="fa fa-user-circle" style="font-size: 40px; color: #007bff; margin-right: 10px;"></i>
+                                        <div>
+                                            <h6 class="mb-0"><strong>{{ forum.author }}</strong></h6>
+                                            <small class="text-muted">
+                                                <i class="fa fa-calendar"></i> {{ forum.createdAt|date('d/m/Y H:i') }}
+                                            </small>
+                                        </div>
+                                    </div>
+                                    <div class="dropdown">
+                                        <button class="btn btn-sm btn-link text-muted dropdown-toggle" type="button" id="dropdownMenuList{{ forum.id }}" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="pointer-events: auto;">
+                                            <i class="fa fa-ellipsis-h"></i>
+                                        </button>
+                                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuList{{ forum.id }}" style="min-width: 150px;">
+                                            <a class="dropdown-item" href="{{ path('app_forum_edit', {'id': forum.id}) }}">
+                                                <i class="fa fa-edit"></i> Edit
+                                            </a>
+                                            <form action="{{ path('app_forum_delete', {'id': forum.id}) }}" method="POST" style="display:inline;">
+                                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ forum.id) }}">
+                                                <button type="submit" class="dropdown-item text-danger" onclick="return confirm('Delete this post?')">
+                                                    <i class="fa fa-trash"></i> Delete
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Post Content -->
+                            <div class="card-body">
+                                <h5 class="card-title"><strong>{{ forum.title }}</strong></h5>
+                                <p class="card-text">{{ forum.content }}</p>
+                                {% if forum.image %}
+                                    <div class="mt-3">
+                                        <img src="{{ forum.image }}" alt="{{ forum.title }}" class="img-fluid rounded" style="max-height: 400px; width: 100%; object-fit: cover;">
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Post Stats -->
+                            <div class="card-body border-top border-bottom py-2">
+                                <small class="text-muted d-flex justify-content-between">
+                                    <span>
+                                        <i class="fa fa-eye"></i> {{ forum.views }} views
+                                        <span class="ml-3">
+                                            <i class="fa fa-comments"></i> {{ forum.commentaires|length }} comments
+                                        </span>
+                                    </span>
+                                    <span class="reaction-summary" data-forum-id="{{ forum.id }}">
+                                        {% set reactionCounts = forum.getReactionCounts() %}
+                                        {% if reactionCounts.like > 0 or reactionCounts.love > 0 or reactionCounts.haha > 0 or reactionCounts.wow > 0 or reactionCounts.sad > 0 or reactionCounts.angry > 0 %}
+                                            {% if reactionCounts.like > 0 %}<span title="Like">👍</span>{% endif %}
+                                            {% if reactionCounts.love > 0 %}<span title="Love">❤️</span>{% endif %}
+                                            {% if reactionCounts.haha > 0 %}<span title="Haha">😆</span>{% endif %}
+                                            {% if reactionCounts.wow > 0 %}<span title="Wow">😮</span>{% endif %}
+                                            {% if reactionCounts.sad > 0 %}<span title="Sad">😢</span>{% endif %}
+                                            {% if reactionCounts.angry > 0 %}<span title="Angry">😠</span>{% endif %}
+                                        {% endif %}
+                                    </span>
+                                </small>
+                            </div>
+
+                            <!-- Post Actions -->
+                            <div class="card-body bg-light py-2">
+                                <div class="row text-center">
+                                    <div class="col-12 col-md-auto">
+                                        <div class="reaction-button-group d-inline-flex" data-forum-id="{{ forum.id }}">
+                                            <button class="btn btn-link text-muted reaction-btn p-2" data-type="like" title="Like" style="font-size: 20px; flex: 0 0 auto;">👍</button>
+                                            <button class="btn btn-link text-muted reaction-btn p-2" data-type="love" title="Love" style="font-size: 20px; flex: 0 0 auto;">❤️</button>
+                                            <button class="btn btn-link text-muted reaction-btn p-2" data-type="haha" title="Haha" style="font-size: 20px; flex: 0 0 auto;">😆</button>
+                                            <button class="btn btn-link text-muted reaction-btn p-2" data-type="wow" title="Wow" style="font-size: 20px; flex: 0 0 auto;">😮</button>
+                                            <button class="btn btn-link text-muted reaction-btn p-2" data-type="sad" title="Sad" style="font-size: 20px; flex: 0 0 auto;">😢</button>
+                                            <button class="btn btn-link text-muted reaction-btn p-2" data-type="angry" title="Angry" style="font-size: 20px; flex: 0 0 auto;">😠</button>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <a href="{{ path('app_forum_show', {'id': forum.id}) }}" class="btn btn-link text-muted w-100 text-decoration-none">
+                                            <i class="fa fa-expand"></i> View Post
+                                        </a>
+                                    </div>
+                                    <div class="col">
+                                        <button class="btn btn-link text-muted w-100" data-toggle="collapse" data-target="#comments{{ forum.id }}">
+                                            <i class="fa fa-comment"></i> Comment
+                                        </button>
+                                    </div>
+                                    <div class="col">
+                                        <button class="btn btn-link text-muted w-100">
+                                            <i class="fa fa-share"></i> Share
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Comments Section -->
+                            <div class="card-body border-top" id="comments{{ forum.id }}">
+                                <!-- Existing Comments -->
+                                {% if forum.commentaires|length > 0 %}
+                                    <div class="comments-list mb-3">
+                                        {% for comment in forum.commentaires %}
+                                            <div class="comment mb-3 p-2" style="background-color: #f0f2f5; border-radius: 8px;" data-author="{{ comment.author|e('js') }}">
+                                                <div class="d-flex">
+                                                    <i class="fa fa-user-circle" style="font-size: 32px; color: #007bff; margin-right: 10px;"></i>
+                                                    <div class="flex-grow-1">
+                                                        <h6 class="mb-0"><strong>{{ comment.author }}</strong></h6>
+                                                        <p class="mb-1" style="font-size: 14px;">{{ comment.content }}</p>
+                                                        <small class="text-muted d-flex justify-content-between">
+                                                            <span>{{ comment.createdAt|date('d/m/Y H:i') }}
+                                                                {% if comment.updatedAt and comment.updatedAt != comment.createdAt %}
+                                                                    <em style="font-size: 11px; margin-left: 10px;">(Edited: {{ comment.updatedAt|date('d/m/Y H:i') }})</em>
+                                                                {% endif %}
+                                                            </span>
+                                                            <div class="comment-reactions" data-comment-id="{{ comment.id }}">
+                                                                <button class="btn btn-link btn-sm p-0 ml-2 comment-reaction-btn" data-type="like" style="font-size: 14px;">👍</button>
+                                                                <button class="btn btn-link btn-sm p-0 ml-1 comment-reaction-btn" data-type="love" style="font-size: 14px;">❤️</button>
+                                                                <button class="btn btn-link btn-sm p-0 ml-1 comment-reaction-btn" data-type="haha" style="font-size: 14px;">😆</button>
+                                                                <button class="btn btn-link btn-sm p-0 ml-1 comment-reaction-btn" data-type="wow" style="font-size: 14px;">😮</button>
+                                                                <button class="btn btn-link btn-sm p-0 ml-1 comment-reaction-btn" data-type="sad" style="font-size: 14px;">😢</button>
+                                                                <button class="btn btn-link btn-sm p-0 ml-1 comment-reaction-btn" data-type="angry" style="font-size: 14px;">😠</button>
+                                                            </div>
+                                                        </small>
+                                                    </div>
+                                                    <div class="dropdown" style="margin-left: auto;">
+                                                        <button class="btn btn-sm btn-link text-muted dropdown-toggle" type="button" id="dropdownCommentList{{ comment.id }}" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="pointer-events: auto;">
+                                                            <i class="fa fa-ellipsis-h"></i>
+                                                        </button>
+                                                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownCommentList{{ comment.id }}" style="min-width: 130px;">
+                                                            <button class="dropdown-item edit-comment-btn" data-comment-id="{{ comment.id }}" type="button">
+                                                                <i class="fa fa-edit"></i> Edit
+                                                            </button>
+                                                            <button class="dropdown-item text-danger delete-comment" data-comment-id="{{ comment.id }}" type="button">
+                                                                <i class="fa fa-trash"></i> Delete
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+
+                                <!-- Add Comment Form -->
+                                <div class="add-comment mt-3 pt-3 border-top">
+                                    <form class="comment-form" data-forum-id="{{ forum.id }}">
+                                        <div class="input-group">
+                                            <input type="text" class="form-control comment-content" placeholder="Écrivez un commentaire..." style="border-radius: 20px 0 0 20px;">
+                                            <div class="input-group-append">
+                                                <button class="btn btn-primary" type="submit" style="border-radius: 0 20px 20px 0;">
+                                                    <i class="fa fa-paper-plane"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="alert alert-info text-center">
+                        <h5>No posts yet. <button id="open-create-post-modal-2" style="background: none; border: none; color: #007bff; cursor: pointer; text-decoration: underline;">Be the first to post!</button></h5>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    {% endif %}
+</div>
+
+<!-- Create Post Modal -->
+<div id="create-post-modal" class="modal-overlay" style="display: none;">
+    <div class="modal-container">
+        <!-- Modal Header -->
+        <div class="modal-header">
+            <h5 class="modal-title">Create New Post</h5>
+            <button type="button" class="close-modal" id="close-modal-btn">
+                <i class="fa fa-times"></i>
+            </button>
+        </div>
+
+        <!-- Modal Body -->
+        <div class="modal-body">
+            <form id="modal-forum-new-form" action="{{ path('app_forum_new') }}" method="POST" enctype="multipart/form-data">
+                <!-- Author hidden input -->
+                <input type="hidden" id="modal-author" name="author" value="">
+
+                <!-- Title -->
+                <div class="form-group mb-3">
+                    <label for="modal-title" class="form-label"><strong>Topic Title *</strong></label>
+                    <input type="text" class="form-control form-control-lg" id="modal-title" name="title" placeholder="What's your topic about?" value="{{ modal_old.title|default('') }}">
+                    <small class="text-muted">3-255 characters</small>
+                    <div class="invalid-feedback" style="display: block; color: #dc3545; font-size: 12px; margin-top: 4px;">{{ (modal_errors.title is defined) ? modal_errors.title|join(', ') : '' }}</div>
+                </div>
+
+                <!-- Content -->
+                <div class="form-group mb-4">
+                    <label for="modal-content" class="form-label"><strong>Content *</strong></label>
+                    <textarea class="form-control" id="modal-content" name="content" rows="8" placeholder="Share your thoughts...">{{ modal_old.content|default('') }}</textarea>
+                    <small class="text-muted">10-5000 characters</small>
+                    <div class="invalid-feedback" style="display: block; color: #dc3545; font-size: 12px; margin-top: 4px;">{{ (modal_errors.content is defined) ? modal_errors.content|join(', ') : '' }}</div>
+                </div>
+
+                <!-- Tags (Optional) -->
+                <div class="form-group mb-4">
+                    <label for="modal-tags" class="form-label"><strong>Tags (Optional)</strong></label>
+                    <input type="text" class="form-control" id="modal-tags" name="tags" placeholder="tag1, tag2, tag3" value="{{ modal_old.tags|default('') }}">
+                    <div class="invalid-feedback" style="display: block; color: #dc3545; font-size: 12px; margin-top: 4px;">{{ (modal_errors.tags is defined) ? modal_errors.tags|join(', ') : '' }}</div>
+                    <small class="text-muted">Format: comma-separated tags (max 255 characters)</small>
+                    <div class="invalid-feedback" style="display: block; color: #dc3545; font-size: 12px; margin-top: 4px;"></div>
+                </div>
+
+                <!-- External Link -->
+                <div class="form-group mb-4">
+                    <label for="modal-link" class="form-label"><strong>External Link (Optional)</strong></label>
+                    <input type="text" class="form-control" id="modal-link" name="link" placeholder="https://example.com/article-or-image" value="{{ modal_old.link|default('') }}">
+                    <div class="invalid-feedback" style="display: block; color: #dc3545; font-size: 12px; margin-top: 4px;">{{ (modal_errors.link is defined) ? modal_errors.link|join(', ') : '' }}</div>
+                    <small class="text-muted">Must be a valid URL if provided</small>
+                    <div class="invalid-feedback" style="display: block; color: #dc3545; font-size: 12px; margin-top: 4px;"></div>
+                </div>
+
+                <!-- Image Upload -->
+                <div class="form-group mb-4">
+                    <label for="modal-post-image" class="form-label"><strong>Image (Optional)</strong></label>
+                    <input type="file" class="form-control" id="modal-post-image" name="post_image" accept="image/*">
+                    <div class="invalid-feedback" style="display: block; color: #dc3545; font-size: 12px; margin-top: 4px;">{{ (modal_errors.post_image is defined) ? modal_errors.post_image|join(', ') : '' }}</div>
+                    <small class="text-muted">Supported formats: jpg, png, gif, webp</small>
+                    <div class="invalid-feedback" style="display: block; color: #dc3545; font-size: 12px; margin-top: 4px;"></div>
+                </div>
+
+                <!-- Buttons -->
+                <div class="form-group d-flex gap-2">
+                    <button type="submit" class="btn btn-primary btn-lg flex-grow-1">
+                        <i class="fa fa-paper-plane"></i> Publish Post
+                    </button>
+                    <button type="button" class="btn btn-secondary btn-lg flex-grow-1 close-modal">
+                        <i class="fa fa-times"></i> Cancel
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Facebook-like feed styles */
+    :root {
+        --fb-blue: #1877f2;
+        --muted: #65676b;
+        --card-bg: #ffffff;
+        --card-border: #e6e6e6;
+        --rounded: 12px;
+    }
+
+    .facebook-post-create {
+        border-radius: var(--rounded);
+        box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        background: var(--card-bg);
+        border: 1px solid var(--card-border);
+        padding: 16px;
+    }
+
+    .facebook-post {
+        border-radius: var(--rounded);
+        box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+        background: var(--card-bg);
+        border: 1px solid var(--card-border);
+        transition: transform .08s ease, box-shadow .08s ease;
+        margin-bottom: 18px;
+    }
+
+    .facebook-post:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+    }
+
+    .profile-bar, .facebook-post .card-header, .facebook-post-create {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .profile-bar .fa-user-circle, .facebook-post .fa-user-circle {
+        color: var(--fb-blue);
+        background: rgba(24,119,242,0.08);
+        border-radius: 50%;
+        padding: 6px;
+        font-size: 36px;
+    }
+
+    .facebook-post .card-header h6,
+    .facebook-post .card-header small { margin: 0; }
+
+    .facebook-post .card-body {
+        padding: 14px 16px;
+    }
+
+    .facebook-post .card-title { font-size: 16px; }
+
+    .facebook-post-create .form-control {
+        border-radius: 999px;
+        padding: 14px 18px;
+        background: #f0f2f5;
+        border: none;
+        cursor: pointer;
+    }
+
+    .reaction-button-group {
+        display: inline-flex !important;
+        gap: 6px;
+        border-radius: 999px;
+        padding: 6px;
+        background-color: transparent;
+    }
+
+    .reaction-button-group .reaction-btn {
+        flex: 0 0 auto !important;
+        padding: 8px 10px !important;
+        border-radius: 50%;
+        transition: transform .08s ease, background .12s ease;
+        font-size: 18px !important;
+        color: var(--muted);
+        background-color: transparent !important;
+        border: none !important;
+    }
+
+    .reaction-button-group .reaction-btn:hover {
+        transform: translateY(-2px);
+        background-color: rgba(0,0,0,0.04) !important;
+        color: #000;
+    }
+
+    .reaction-summary span { margin-right: 6px; font-size: 16px; }
+
+    .comment { word-wrap: break-word; }
+
+    .comments-list .comment { background: #f0f2f5; padding: 10px; border-radius: 10px; }
+
+    .comment-reactions { display:flex; gap:6px; }
+
+    .comment-reaction-btn { opacity:0.75; }
+
+    .delete-comment { opacity:0.6; }
+
+    /* Dropdown menu styling */
+    .dropdown-menu {
+        position: absolute;
+        top: 100%;
+        left: auto;
+        right: 0;
+        z-index: 1000;
+        display: none;
+        min-width: 150px;
+        margin: 0;
+        padding: 0.5rem 0;
+        background-color: #fff;
+        border: 1px solid rgba(0,0,0,0.15);
+        border-radius: 0.25rem;
+        box-shadow: 0 6px 12px rgba(0,0,0,0.175);
+    }
+
+    .dropdown-menu.show {
+        display: block;
+    }
+
+    .dropdown-menu .dropdown-item {
+        display: block;
+        width: 100%;
+        padding: 0.5rem 1rem;
+        clear: both;
+        color: #212529;
+        text-align: inherit;
+        text-decoration: none;
+        white-space: nowrap;
+        background-color: transparent;
+        border: 0;
+        cursor: pointer;
+    }
+
+    .dropdown-menu .dropdown-item:hover,
+    .dropdown-menu .dropdown-item:focus {
+        color: #16213e;
+        background-color: #f8f9fa;
+    }
+
+    .dropdown-menu .dropdown-item.text-danger:hover,
+    .dropdown-menu .dropdown-item.text-danger:focus {
+        color: #dc3545 !important;
+        background-color: #f8f9fa;
+    }
+
+    .dropdown,
+    .dropup,
+    .dropstart,
+    .dropend {
+        position: relative;
+    }
+
+    .dropdown-toggle::after {
+        display: inline-block;
+        margin-left: 0.255em;
+        vertical-align: 0.255em;
+        content: "";
+        border-top: 0.3em solid;
+        border-right: 0.3em solid transparent;
+        border-bottom: 0;
+        border-left: 0.3em solid transparent;
+    }
+
+    .dropdown-toggle:empty::after {
+        margin-left: 0;
+    }
+
+    /* Create modal-like header for new post page */
+    .create-modal {
+        max-width: 720px;
+        margin: 24px auto;
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 18px 60px rgba(0,0,0,0.18);
+        overflow: hidden;
+    }
+
+    .create-modal .card-header { background: linear-gradient(90deg, var(--fb-blue), #0063d1); color: #fff; padding: 18px 20px; }
+
+    .create-modal textarea { min-height: 160px; font-size: 20px; border: none; resize: vertical; }
+
+    .create-toolbar { display:flex; gap:12px; align-items:center; padding:12px 16px; border-top:1px solid #eee; }
+
+    .create-toolbar .tool { display:inline-flex; align-items:center; gap:8px; padding:8px 12px; border-radius:8px; background:#f6f7f9; cursor:pointer; }
+
+    @media (max-width: 768px) {
+        .create-modal { margin: 12px; }
+        .facebook-post .card-body { padding: 12px; }
+    }
+
+    /* Modal Styles */
+    .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+    }
+
+    .modal-container {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        width: 90%;
+        max-width: 600px;
+        max-height: 90vh;
+        overflow-y: auto;
+    }
+
+    .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 16px 24px;
+        border-bottom: 1px solid #e5e5ea;
+    }
+
+    .modal-title {
+        font-size: 20px;
+        font-weight: 600;
+        margin: 0;
+        color: #000;
+    }
+
+    .close-modal {
+        background: none;
+        border: none;
+        font-size: 24px;
+        color: #65676b;
+        cursor: pointer;
+        padding: 0;
+    }
+
+    .close-modal:hover {
+        color: #000;
+    }
+
+    .modal-body {
+        padding: 24px;
+    }
+
+    .modal-body .form-control,
+    .modal-body .form-control-lg {
+        border: 1px solid #e0e0e0;
+        border-radius: 6px;
+        padding: 10px 15px;
+        font-size: 15px;
+    }
+
+    .modal-body .form-control:focus,
+    .modal-body .form-control-lg:focus {
+        border-color: #1877f2;
+        box-shadow: 0 0 0 0.2rem rgba(24, 119, 242, 0.25);
+    }
+
+    .modal-body textarea.form-control {
+        resize: vertical;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .modal-body .btn-lg {
+        padding: 12px 20px;
+        font-size: 16px;
+        border-radius: 6px;
+    }
+
+    .modal-body .btn-primary {
+        background-color: #1877f2;
+        border-color: #1877f2;
+    }
+
+    .modal-body .btn-primary:hover {
+        background-color: #0f62d8;
+        border-color: #0f62d8;
+    }
+
+    .modal-body .form-label {
+        color: #333;
+        margin-bottom: 8px;
+        font-weight: 500;
+    }
+
+    .gap-2 {
+        gap: 12px;
+    }
+
+    .flex-grow-1 {
+        flex: 1;
+    }
+
+    /* Form Validation Styles */
+    .is-invalid {
+        border-color: #dc3545 !important;
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath fill='%23dc3545' d='M8 4a.5.5 0 0 0-.949 0l-.471 1.415H5.407l1.147.944-.471 1.415a.5.5 0 0 0 .794.586l1.147-.944 1.147.944a.5.5 0 0 0 .794-.586l-.471-1.415 1.147-.944H8.42L8 4Z'/%3e%3c/svg%3e");
+        background-repeat: no-repeat;
+        background-position: right calc(0.375em + 0.1875rem) center;
+        background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+        padding-right: calc(1.5em + 0.75rem);
+    }
+
+    .is-invalid:focus {
+        border-color: #dc3545;
+        box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+    }
+
+    .invalid-feedback {
+        display: block;
+        width: 100%;
+        margin-top: 0.25rem;
+        font-size: 0.875em;
+        color: #dc3545;
+    }
+</style>
+
+<script>
+// Profile Management
+function initProfile() {
+    let author = localStorage.getItem('forumAuthor');
+    if (!author) {
+        localStorage.setItem('forumAuthor', 'Anonyme');
+    }
+    updateProfileDisplay();
+}
+
+function updateProfileDisplay() {
+    const author = localStorage.getItem('forumAuthor') || 'Anonyme';
+    const userNameElement = document.getElementById('current-user-name');
+    if (userNameElement) {
+        userNameElement.textContent = author;
+    }
+}
+
+// Get author name from localStorage
+function getAuthorName() {
+    return localStorage.getItem('forumAuthor') || 'Anonyme';
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize profile on page load
+    initProfile();
+    
+    // Modal functionality
+    const modal = document.getElementById('create-post-modal');
+    const openModalBtn = document.getElementById('open-create-post-modal');
+    const openModalBtn2 = document.getElementById('open-create-post-modal-2');
+    const closeModalBtns = document.querySelectorAll('.close-modal');
+    const modalForm = document.getElementById('modal-forum-new-form');
+    
+    if (!modal) {
+        console.error('Modal not found!');
+        return;
+    }
+    
+    // Open modal
+    function openModal() {
+        console.log('openModal() called');
+        if (!modal) { console.error('Modal element missing'); return; }
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+        // Populate author
+        const author = localStorage.getItem('forumAuthor') || 'Anonyme';
+        const authorInput = document.getElementById('modal-author');
+        if (authorInput) authorInput.value = author;
+        // Focus title field
+        setTimeout(() => {
+            const titleEl = document.getElementById('modal-title');
+            if (titleEl) titleEl.focus();
+        }, 100);
+    }
+    
+    // Close modal
+    function closeModal() {
+        modal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+        // Reset form
+        if (modalForm) modalForm.reset();
+    }
+    
+    // Open modal on button clicks
+    if (openModalBtn) {
+        openModalBtn.addEventListener('click', function(e) {
+            console.log('openModalBtn clicked', e);
+            e.preventDefault();
+            openModal();
+        });
+    }
+    if (openModalBtn2) {
+        openModalBtn2.addEventListener('click', function(e) {
+            console.log('openModalBtn2 clicked', e);
+            e.preventDefault();
+            openModal();
+        });
+    }
+    
+    // Close modal on close buttons
+    closeModalBtns.forEach(btn => {
+        btn.addEventListener('click', closeModal);
+    });
+    
+    // Close modal when clicking outside
+    modal.addEventListener('click', function(e) {
+        if (e.target === modal) {
+            closeModal();
+        }
+    });
+    
+    // Client-side form validation removed — rely on Symfony backend validation
+    
+    // Emoji reaction functionality for posts
+    document.querySelectorAll('.reaction-button-group').forEach(group => {
+        const forumId = group.dataset.forumId;
+        
+        group.querySelectorAll('.reaction-btn').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                const reactionType = this.dataset.type;
+                const author = getAuthorName();
+                const url = '{{ path('forum_react', {'id': 'FORUM_ID'}) }}'.replace('FORUM_ID', forumId);
+                
+                fetch(url, {
+                    method: 'POST',
+                    body: new URLSearchParams({
+                        'type': reactionType,
+                        'author': author
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Reload page to show updated reactions
+                        location.reload();
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+            });
+        });
+    });
+
+    // Emoji reaction functionality for comments
+    document.querySelectorAll('.comment-reactions').forEach(group => {
+        const commentId = group.dataset.commentId;
+        
+        group.querySelectorAll('.comment-reaction-btn').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                const reactionType = this.dataset.type;
+                const author = getAuthorName();
+                const url = '{{ path('comment_react', {'id': 'COMMENT_ID'}) }}'.replace('COMMENT_ID', commentId);
+                
+                fetch(url, {
+                    method: 'POST',
+                    body: new URLSearchParams({
+                        'type': reactionType,
+                        'author': author
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        location.reload();
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+            });
+        });
+    });
+
+    // Add comment functionality
+    document.querySelectorAll('.comment-form').forEach(form => {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const forumId = this.dataset.forumId;
+            const author = getAuthorName();
+            const content = this.querySelector('.comment-content').value;
+
+            const url = '{{ path('forum_add_comment', {'id': 'FORUM_ID'}) }}'.replace('FORUM_ID', forumId);
+
+            fetch(url, {
+                method: 'POST',
+                body: new URLSearchParams({
+                    'author': author,
+                    'content': content
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Reset form
+                    this.querySelector('.comment-content').value = '';
+                    
+                    // Reload page to show new comment
+                    location.reload();
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    });
+
+    // Delete comment functionality
+    document.querySelectorAll('.delete-comment').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            if(confirm('Delete this comment?')) {
+                const commentId = this.dataset.commentId;
+                const url = '{{ path('forum_delete_comment', {'id': 'COMMENT_ID'}) }}'.replace('COMMENT_ID', commentId);
+
+                fetch(url, { 
+                    method: 'POST'
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if(data.success) {
+                            location.reload();
+                        } else {
+                            alert('Error deleting comment: ' + (data.error || 'Unknown error'));
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Error deleting comment');
+                    });
+            }
+        });
+    });
+
+    // Edit comment functionality
+    document.querySelectorAll('.edit-comment-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const commentId = this.dataset.commentId;
+            const commentElement = this.closest('.comment');
+            const contentInComment = commentElement.querySelector('p.mb-1');
+            
+            if (contentInComment && !commentElement.querySelector('.comment-edit-form')) {
+                const currentContent = contentInComment.innerText;
+                
+                // Hide the current text and create an edit form
+                contentInComment.style.display = 'none';
+                
+                const editForm = document.createElement('div');
+                editForm.className = 'comment-edit-form';
+                editForm.style.cssText = 'display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px;';
+                editForm.innerHTML = `
+                    <textarea class="form-control comment-edit-input" style="padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; resize: vertical; min-height: 60px;">${currentContent}</textarea>
+                    <div style="display: flex; gap: 8px;">
+                        <button class="btn btn-sm btn-primary comment-save-btn" data-comment-id="${commentId}">Save</button>
+                        <button class="btn btn-sm btn-secondary comment-cancel-btn">Cancel</button>
+                    </div>
+                `;
+                
+                contentInComment.parentElement.insertBefore(editForm, contentInComment);
+                
+                // Handle cancel
+                editForm.querySelector('.comment-cancel-btn').addEventListener('click', function() {
+                    editForm.remove();
+                    contentInComment.style.display = 'block';
+                });
+                
+                // Handle save
+                editForm.querySelector('.comment-save-btn').addEventListener('click', function() {
+                    const newContent = editForm.querySelector('.comment-edit-input').value.trim();
+                    if (newContent === '') {
+                        alert('Comment cannot be empty');
+                        return;
+                    }
+                    
+                    const url = '{{ path('forum_edit_comment', {'id': 'COMMENT_ID'}) }}'.replace('COMMENT_ID', commentId);
+                    
+                    fetch(url, {
+                        method: 'POST',
+                        body: new URLSearchParams({
+                            'content': newContent
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if(data.success) {
+                            location.reload();
+                        } else {
+                            alert('Error saving comment');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Error saving comment');
+                    });
+                });
+                
+                // Focus the textarea
+                editForm.querySelector('.comment-edit-input').focus();
+            }
+        });
+    });
+
+    // Ensure hidden author inputs in new/edit forms are populated from profile
+    const fillHiddenAuthors = () => {
+        const stored = getAuthorName();
+        document.querySelectorAll('input[type="hidden"][name="author"]').forEach(inp => {
+            if (inp && (!inp.value || inp.value === '')) {
+                inp.value = stored;
+            }
+        });
+    };
+
+    fillHiddenAuthors();
+
+    // Also ensure edit form populates author before submit
+    const editForm = document.getElementById('forum-edit-form');
+    if (editForm) {
+        editForm.addEventListener('submit', function() {
+            const stored = getAuthorName();
+            const authorInput = this.querySelector('input[name="author"]');
+            if (authorInput) authorInput.value = stored;
+        });
+    }
+
+    // Initialize dropdown menus (Bootstrap 5 native)
+    const initDropdowns = () => {
+        // Bootstrap 5 handles dropdowns with data-bs-toggle automatically
+        // Re-initialize any dynamically added dropdowns
+        document.querySelectorAll('[data-bs-toggle="dropdown"]').forEach(trigger => {
+            new bootstrap.Dropdown(trigger);
+        });
+    };
+
+    initDropdowns();
+
+    // --- AJAX search / filter UI ---
+    const searchBtn = document.getElementById('search-btn');
+    const resetBtn = document.getElementById('reset-btn');
+    const authorInput = document.getElementById('search-author');
+    const postsContainer = document.getElementById('posts-container');
+    
+    // Store all original posts to prevent filtering on filtered data
+    let allPosts = [];
+    
+    function captureInitialPosts() {
+        if (!postsContainer) return;
+        const nodes = Array.from(postsContainer.querySelectorAll('.facebook-post'));
+        allPosts = nodes.map(node => ({
+            id: node.dataset.id,
+            title: node.dataset.title || '',
+            content: node.dataset.content || '',
+            author: node.dataset.author || '',
+            created: node.dataset.created ? new Date(node.dataset.created) : null,
+            tags: node.dataset.tags || '',
+            image: node.querySelector('img') ? node.querySelector('img').src : '',
+            html: node.outerHTML
+        }));
+    }
+
+    function renderPosts(posts) {
+        if (!postsContainer) return;
+        if (!posts || posts.length === 0) {
+            postsContainer.innerHTML = '<div class="alert alert-light">Aucun résultat trouvé.</div>';
+            return;
+        }
+
+        let html = '';
+        posts.forEach(p => {
+            const createdIso = p.createdAt || p.created || '';
+            const createdText = createdIso ? new Date(createdIso).toLocaleString() : '';
+            html += `
+                <div class="card mb-4 facebook-post" data-id="${escapeAttr(p.id)}" data-title="${escapeAttr(p.title || '')}" data-content="${escapeAttr((p.content||'').replace(/<[^>]*>/g, ''))}" data-author="${escapeAttr(p.author||'')}" data-created="${escapeAttr(createdIso)}" data-tags="${escapeAttr(p.tags||'')}">
+                    <div class="card-header bg-white border-bottom">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="d-flex align-items-center">
+                                <i class="fa fa-user-circle" style="font-size: 40px; color: #007bff; margin-right: 10px;"></i>
+                                <div>
+                                    <h6 class="mb-0"><strong>${escapeHtml(p.author || 'Anonyme')}</strong></h6>
+                                    <small class="text-muted"><i class="fa fa-calendar"></i> ${escapeHtml(createdText)}</small>
+                                </div>
+                            </div>
+                            ${p.createdByAdmin ? `
+                                <div class="dropdown">
+                                    <button class="btn btn-sm btn-link text-muted dropdown-toggle" type="button" id="dropdownPost${p.id}" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <i class="fa fa-ellipsis-h"></i>
+                                    </button>
+                                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownPost${p.id}">
+                                        <a class="dropdown-item" href="/admin/posts/all/${p.id}/edit">
+                                            <i class="fa fa-edit"></i> Éditer
+                                        </a>
+                                        <form method="POST" action="/admin/posts/all/${p.id}/delete" style="display:inline; margin:0;">
+                                            <button type="submit" class="dropdown-item text-danger" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce post ?')">
+                                                <i class="fa fa-trash"></i> Supprimer
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex align-items-center gap-2 mb-2">
+                            <h5 class="card-title mb-0"><strong>${escapeHtml(p.title)}</strong></h5>
+                            ${p.createdByAdmin ? `<span class="badge bg-primary"><i class="fa fa-shield"></i> Admin</span>` : ''}
+                        </div>
+                        <p class="card-text">${escapeHtml(p.content)}</p>
+                        ${p.image ? `<div class="mt-3"><img src="${escapeAttr(p.image)}" class="img-fluid rounded" style="max-height:400px; width:100%; object-fit:cover;"></div>` : ''}
+                    </div>
+                    <!-- Comments area -->
+                    <div class="card-body border-top" id="comments${escapeAttr(p.id)}">
+                        <div class="comments-list mb-3">
+                            ${ (p.comments && p.comments.length) ? p.comments.map(c => (c.html ? c.html : (`\n                                    <div class="comment mb-3 p-2" style="background-color: #f0f2f5; border-radius: 8px;" data-author="${escapeAttr(c.author||'')}">\n                                        <div class="d-flex">\n                                            <i class="fa fa-user-circle" style="font-size: 32px; color: #007bff; margin-right: 10px;"></i>\n                                            <div class="flex-grow-1">\n                                                <h6 class="mb-0"><strong>${escapeHtml(c.author || 'Anonyme')}</strong></h6>\n                                                <p class="mb-1" style="font-size: 14px;">${escapeHtml(c.content || '')}</p>\n                                                <small class="text-muted">${escapeHtml(c.createdAt ? (new Date(c.createdAt)).toLocaleString() : '')}</small>\n                                            </div>\n                                            ${p.createdByAdmin ? `\n                                                <div class="dropdown" style="margin-left: auto;">\n                                                    <button class="btn btn-sm btn-link text-muted dropdown-toggle" type="button" id="dropdownComment${c.id}" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">\n                                                        <i class="fa fa-ellipsis-h"></i>\n                                                    </button>\n                                                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownComment${c.id}">\n                                                        <a class="dropdown-item" href="/admin/comments/${c.id}/edit">\n                                                            <i class="fa fa-edit"></i> Éditer\n                                                        </a>\n                                                        <form method="POST" action="/admin/comments/${c.id}/delete" style="display:inline; margin:0;">\n                                                            <button type="submit" class="dropdown-item text-danger" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce commentaire ?')">\n                                                                <i class="fa fa-trash"></i> Supprimer\n                                                            </button>\n                                                        </form>\n                                                    </div>\n                                                </div>\n                                            ` : ''}\n                                        </div>\n                                    </div>\n                                `))).join('\n') : '' }
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+        postsContainer.innerHTML = html;
+        initDropdowns();
+        attachAdminPostHandlers();
+    }
+
+    // Basic escaping helpers
+    function escapeHtml(str) {
+        if (!str) return '';
+        return String(str).replace(/[&<>\\"]/g, function(s) {
+            return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[s]);
+        });
+    }
+    function escapeAttr(str) { return escapeHtml(str); }
+
+    function doSearch(sortField = 'createdAt', sortDir = 'DESC') {
+        // Server-side search via AJAX
+        const params = new URLSearchParams();
+        if (authorInput && authorInput.value.trim() !== '') params.set('author', authorInput.value.trim());
+        
+        // Set sort parameters
+        params.set('sortField', sortField);
+        params.set('sortDir', sortDir);
+        params.set('limit', 50);
+
+        fetch('{{ path('app_forum_search') }}' + '?' + params.toString(), { method: 'GET' })
+            .then(r => r.json())
+            .then(data => {
+                // Server returns posts with comments array
+                const posts = (data.data || []).map(p => ({
+                    id: p.id,
+                    title: p.title,
+                    content: p.content,
+                    author: p.author,
+                    created: p.createdAt,
+                    createdAt: p.createdAt,
+                    image: p.image,
+                    tags: p.tags,
+                    createdByAdmin: p.createdByAdmin,
+                    comments: (p.comments || []).map(c => ({ html: null, author: c.author, content: c.content, createdAt: c.createdAt }))
+                }));
+                renderPosts(posts);
+            })
+            .catch(err => console.error('Search error', err));
+    }
+
+    // Debounce helper
+    function debounce(fn, wait) {
+        let t;
+        return function(...args) { clearTimeout(t); t = setTimeout(() => fn.apply(this, args), wait); };
+    }
+
+    // ==================== COMMENTS SEARCH ====================
+    
+    // Store all original comments for each post
+
+    
+    if (searchBtn) searchBtn.addEventListener('click', () => doSearch('createdAt', 'DESC'));
+    if (resetBtn) resetBtn.addEventListener('click', function() {
+        if (authorInput) authorInput.value = '';
+        doSearch('createdAt', 'DESC');
+    });
+
+    if (authorInput) authorInput.addEventListener('input', debounce(() => doSearch('createdAt', 'DESC'), 400));
+    
+    // Attach admin post handlers (edit/delete)
+    function attachAdminPostHandlers() {
+        // No-op: post/comment actions use server-side links/forms now
+    }
+    
+    // Make posts in the feed clickable to view full post (use existing `postsContainer`)
+    if (postsContainer) {
+        postsContainer.addEventListener('click', function(e) {
+            // Don't navigate if user clicked on a button, dropdown, link, or input
+            const clickedElement = e.target.closest('button, a, .dropdown-menu, .comment-form, input, textarea');
+            if (clickedElement) return;
+
+            // Find the post card
+            const postCard = e.target.closest('.facebook-post[data-id]');
+            if (postCard) {
+                const postId = postCard.dataset.id;
+                if (postId) {
+                    window.location.href = '/forum/' + postId;
+                }
+            }
+        });
+
+        // Add cursor style to indicate posts are clickable
+        const posts = postsContainer.querySelectorAll('.facebook-post[data-id]');
+        posts.forEach(post => {
+            post.style.cursor = 'pointer';
+            post.addEventListener('mouseenter', function() {
+                this.style.opacity = '0.95';
+            });
+            post.addEventListener('mouseleave', function() {
+                this.style.opacity = '1';
+            });
+        });
+    }
+    
+    // Add event listeners for sort buttons
+    const sortCommentsDesc = document.getElementById('sort-comments-desc');
+    const sortCommentsAsc = document.getElementById('sort-comments-asc');
+    const sortViewsDesc = document.getElementById('sort-views-desc');
+    const sortViewsAsc = document.getElementById('sort-views-asc');
+    
+    if (sortCommentsDesc) sortCommentsDesc.addEventListener('click', () => doSearch('commentsCount', 'DESC'));
+    if (sortCommentsAsc) sortCommentsAsc.addEventListener('click', () => doSearch('commentsCount', 'ASC'));
+    if (sortViewsDesc) sortViewsDesc.addEventListener('click', () => doSearch('views', 'DESC'));
+    if (sortViewsAsc) sortViewsAsc.addEventListener('click', () => doSearch('views', 'ASC'));
+    
+    // Capture initial posts on page load
+    captureInitialPosts();
+
+    // If server requested showing the create modal due to validation errors, open it
+    if ({{ show_modal|default(false) ? 'true' : 'false' }}) {
+        // openModal is defined above in this scope
+        openModal();
+    }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}EduSync{% endblock %}</title>
+
+    {% block stylesheets %}
+        <link rel="stylesheet" href="{{ asset('assets/front/css/bootstrap.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('assets/front/css/font-awesome.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('assets/front/css/animate.css') }}">
+        <link rel="stylesheet" href="{{ asset('assets/front/css/slick.css') }}">
+        <link rel="stylesheet" href="{{ asset('assets/front/css/magnific-popup.css') }}">
+        <link rel="stylesheet" href="{{ asset('assets/front/css/nice-select.css') }}">
+        <link rel="stylesheet" href="{{ asset('assets/front/css/jquery.nice-number.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('assets/front/css/default.css') }}">
+        <link rel="stylesheet" href="{{ asset('assets/front/css/style.css') }}">
+        <link rel="stylesheet" href="{{ asset('assets/front/css/responsive.css') }}">
+    {% endblock %}
+</head>
+
+<body>
+
+    {# NAVBAR #}
+    {% include 'front/partials/navbar.html.twig' %}
+
+    {# PAGE CONTENT #}
+    {% block body %}{% endblock %}
+
+    {# FOOTER #}
+    {% include 'front/partials/footer.html.twig' %}
+
+    {% block javascripts %}
+        <script src="{{ asset('assets/front/js/vendor/jquery-1.12.4.min.js') }}"></script>
+        <script src="{{ asset('assets/front/js/bootstrap.min.js') }}"></script>
+        <script src="{{ asset('assets/front/js/slick.min.js') }}"></script>
+        <script src="{{ asset('assets/front/js/jquery.magnific-popup.min.js') }}"></script>
+        <script src="{{ asset('assets/front/js/waypoints.min.js') }}"></script>
+        <script src="{{ asset('assets/front/js/jquery.counterup.min.js') }}"></script>
+        <script src="{{ asset('assets/front/js/jquery.nice-select.min.js') }}"></script>
+        <script src="{{ asset('assets/front/js/jquery.nice-number.min.js') }}"></script>
+        <script src="{{ asset('assets/front/js/jquery.countdown.min.js') }}"></script>
+        <script src="{{ asset('assets/front/js/validator.min.js') }}"></script>
+        <script src="{{ asset('assets/front/js/ajax-contact.js') }}"></script>
+        <script src="{{ asset('assets/front/js/main.js') }}"></script>
+        <script src="{{ asset('assets/front/js/map-script.js') }}"></script>
+    {% endblock %}
+
+</body>
+</html>

@@ -1,0 +1,326 @@
+{% extends 'front/base_front.html.twig' %}
+
+{% block title %}Nos Cours - EduSync{% endblock %}
+
+{% block body %}
+{# ======= PAGE BANNER SECTION ======= #}
+<section id="page-banner" class="pt-105 pb-110 bg_cover" data-overlay="8" style="background-image: url('{{ asset('images/page-banner-1.jpg') }}')">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="page-banner-cont">
+                    <h2>Nos Cours</h2>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="{{ path('front_home') }}">Accueil</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Cours</li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{# ======= COURSES SECTION ======= #}
+<section id="courses-part" class="pt-120 pb-120 gray-bg">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="courses-top searched">
+                    <div class="courses-search float-left">
+                        <form action="#">
+                            <input type="text" placeholder="Search...">
+                            <button type="button"><i class="fa fa-search"></i></button>
+                        </form>
+                    </div>
+                    <div class="courses-select float-right">
+                        <select>
+                            <option value="">Tous les cours</option>
+                            <option value="1">Featured</option>
+                            <option value="2">Trending</option>
+                            <option value="3">Popular</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {# Featured Courses Grid #}
+        <div class="tab-content" id="myTabContent">
+            <div class="tab-pane fade show active" id="courses-grid" role="tabpanel" aria-labelledby="courses-grid-tab">
+                <div class="row">
+                    {# Course 1 #}
+                    <div class="col-lg-4 col-md-6">
+                        <div class="singel-course mt-30">
+                            <div class="thum">
+                                <div class="image">
+                                    <img src="{{ asset('images/course/cu-1.jpg') }}" alt="Course">
+                                </div>
+                                <div class="price">
+                                    <span>$50</span>
+                                </div>
+                            </div>
+                            <div class="cont">
+                                <ul>
+                                    <li><i class="fa fa-star"></i></li>
+                                    <li><i class="fa fa-star"></i></li>
+                                    <li><i class="fa fa-star"></i></li>
+                                    <li><i class="fa fa-star"></i></li>
+                                    <li><i class="fa fa-star"></i></li>
+                                </ul>
+                                <span>(20 Reviews)</span>
+                                <a href="#">
+                                    <h4>Learn React JS</h4>
+                                </a>
+                                <div class="course-teacher">
+                                    <div class="thum">
+                                        <img src="{{ asset('images/course/teacher/t-1.jpg') }}" alt="teacher">
+                                    </div>
+                                    <div class="name">
+                                        <h6>Mark Mark</h6>
+                                    </div>
+                                    <div class="admin">
+                                        <ul>
+                                            <li><a href="#"><i class="fa fa-user"></i><span>31</span></a></li>
+                                            <li><a href="#"><i class="fa fa-heart"></i><span>10</span></a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {# Course 2 #}
+                    <div class="col-lg-4 col-md-6">
+                        <div class="singel-course mt-30">
+                            <div class="thum">
+                                <div class="image">
+                                    <img src="{{ asset('images/course/cu-2.jpg') }}" alt="Course">
+                                </div>
+                                <div class="price">
+                                    <span>$40</span>
+                                </div>
+                            </div>
+                            <div class="cont">
+                                <ul>
+                                    <li><i class="fa fa-star"></i></li>
+                                    <li><i class="fa fa-star"></i></li>
+                                    <li><i class="fa fa-star"></i></li>
+                                    <li><i class="fa fa-star"></i></li>
+                                    <li><i class="fa fa-star"></i></li>
+                                </ul>
+                                <span>(20 Reviews)</span>
+                                <a href="#">
+                                    <h4>Learn Angular JS</h4>
+                                </a>
+                                <div class="course-teacher">
+                                    <div class="thum">
+                                        <img src="{{ asset('images/course/teacher/t-2.jpg') }}" alt="teacher">
+                                    </div>
+                                    <div class="name">
+                                        <h6>Mark Mark</h6>
+                                    </div>
+                                    <div class="admin">
+                                        <ul>
+                                            <li><a href="#"><i class="fa fa-user"></i><span>31</span></a></li>
+                                            <li><a href="#"><i class="fa fa-heart"></i><span>10</span></a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {# Course 3 #}
+                    <div class="col-lg-4 col-md-6">
+                        <div class="singel-course mt-30">
+                            <div class="thum">
+                                <div class="image">
+                                    <img src="{{ asset('images/course/cu-3.jpg') }}" alt="Course">
+                                </div>
+                                <div class="price">
+                                    <span>$60</span>
+                                </div>
+                            </div>
+                            <div class="cont">
+                                <ul>
+                                    <li><i class="fa fa-star"></i></li>
+                                    <li><i class="fa fa-star"></i></li>
+                                    <li><i class="fa fa-star"></i></li>
+                                    <li><i class="fa fa-star"></i></li>
+                                    <li><i class="fa fa-star"></i></li>
+                                </ul>
+                                <span>(20 Reviews)</span>
+                                <a href="#">
+                                    <h4>Learn Python</h4>
+                                </a>
+                                <div class="course-teacher">
+                                    <div class="thum">
+                                        <img src="{{ asset('images/course/teacher/t-3.jpg') }}" alt="teacher">
+                                    </div>
+                                    <div class="name">
+                                        <h6>Mark Mark</h6>
+                                    </div>
+                                    <div class="admin">
+                                        <ul>
+                                            <li><a href="#"><i class="fa fa-user"></i><span>31</span></a></li>
+                                            <li><a href="#"><i class="fa fa-heart"></i><span>10</span></a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {# Course 4 #}
+                    <div class="col-lg-4 col-md-6">
+                        <div class="singel-course mt-30">
+                            <div class="thum">
+                                <div class="image">
+                                    <img src="{{ asset('images/course/cu-4.jpg') }}" alt="Course">
+                                </div>
+                                <div class="price">
+                                    <span>$30</span>
+                                </div>
+                            </div>
+                            <div class="cont">
+                                <ul>
+                                    <li><i class="fa fa-star"></i></li>
+                                    <li><i class="fa fa-star"></i></li>
+                                    <li><i class="fa fa-star"></i></li>
+                                    <li><i class="fa fa-star"></i></li>
+                                    <li><i class="fa fa-star"></i></li>
+                                </ul>
+                                <span>(20 Reviews)</span>
+                                <a href="#">
+                                    <h4>Learn PHP</h4>
+                                </a>
+                                <div class="course-teacher">
+                                    <div class="thum">
+                                        <img src="{{ asset('images/course/teacher/t-4.jpg') }}" alt="teacher">
+                                    </div>
+                                    <div class="name">
+                                        <h6>Mark Mark</h6>
+                                    </div>
+                                    <div class="admin">
+                                        <ul>
+                                            <li><a href="#"><i class="fa fa-user"></i><span>31</span></a></li>
+                                            <li><a href="#"><i class="fa fa-heart"></i><span>10</span></a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {# Course 5 #}
+                    <div class="col-lg-4 col-md-6">
+                        <div class="singel-course mt-30">
+                            <div class="thum">
+                                <div class="image">
+                                    <img src="{{ asset('images/course/cu-5.jpg') }}" alt="Course">
+                                </div>
+                                <div class="price">
+                                    <span>$45</span>
+                                </div>
+                            </div>
+                            <div class="cont">
+                                <ul>
+                                    <li><i class="fa fa-star"></i></li>
+                                    <li><i class="fa fa-star"></i></li>
+                                    <li><i class="fa fa-star"></i></li>
+                                    <li><i class="fa fa-star"></i></li>
+                                    <li><i class="fa fa-star"></i></li>
+                                </ul>
+                                <span>(20 Reviews)</span>
+                                <a href="#">
+                                    <h4>Learn Web Design</h4>
+                                </a>
+                                <div class="course-teacher">
+                                    <div class="thum">
+                                        <img src="{{ asset('images/course/teacher/t-5.jpg') }}" alt="teacher">
+                                    </div>
+                                    <div class="name">
+                                        <h6>Mark Mark</h6>
+                                    </div>
+                                    <div class="admin">
+                                        <ul>
+                                            <li><a href="#"><i class="fa fa-user"></i><span>31</span></a></li>
+                                            <li><a href="#"><i class="fa fa-heart"></i><span>10</span></a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {# Course 6 #}
+                    <div class="col-lg-4 col-md-6">
+                        <div class="singel-course mt-30">
+                            <div class="thum">
+                                <div class="image">
+                                    <img src="{{ asset('images/course/cu-1.jpg') }}" alt="Course">
+                                </div>
+                                <div class="price">
+                                    <span>$55</span>
+                                </div>
+                            </div>
+                            <div class="cont">
+                                <ul>
+                                    <li><i class="fa fa-star"></i></li>
+                                    <li><i class="fa fa-star"></i></li>
+                                    <li><i class="fa fa-star"></i></li>
+                                    <li><i class="fa fa-star"></i></li>
+                                    <li><i class="fa fa-star"></i></li>
+                                </ul>
+                                <span>(20 Reviews)</span>
+                                <a href="#">
+                                    <h4>Learn Digital Marketing</h4>
+                                </a>
+                                <div class="course-teacher">
+                                    <div class="thum">
+                                        <img src="{{ asset('images/course/teacher/t-1.jpg') }}" alt="teacher">
+                                    </div>
+                                    <div class="name">
+                                        <h6>Mark Mark</h6>
+                                    </div>
+                                    <div class="admin">
+                                        <ul>
+                                            <li><a href="#"><i class="fa fa-user"></i><span>31</span></a></li>
+                                            <li><a href="#"><i class="fa fa-heart"></i><span>10</span></a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {# Pagination #}
+        <div class="row">
+            <div class="col-lg-12">
+                <nav class="courses-pagination mt-50">
+                    <ul class="pagination justify-content-center">
+                        <li class="page-item">
+                            <a href="#" aria-label="Previous">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                        </li>
+                        <li class="page-item"><a class="active" href="#">1</a></li>
+                        <li class="page-item"><a href="#">2</a></li>
+                        <li class="page-item"><a href="#">3</a></li>
+                        <li class="page-item">
+                            <a href="#" aria-label="Next">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

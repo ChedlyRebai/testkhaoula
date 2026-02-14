@@ -1,0 +1,206 @@
+{% extends 'front/base_front.html.twig' %}
+
+{% block title %}Événements - EduSync{% endblock %}
+
+{% block body %}
+{# ======= PAGE BANNER SECTION ======= #}
+<section id="page-banner" class="pt-105 pb-110 bg_cover" data-overlay="8" style="background-image: url('{{ asset('images/page-banner-2.jpg') }}')">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="page-banner-cont">
+                    <h2>Événements</h2>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="{{ path('front_home') }}">Accueil</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Événements</li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{# ======= EVENTS SECTION ======= #}
+<section id="event-part" class="pt-120 pb-120">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="event-top mt-40">
+                    <div class="event-title">
+                        <h3>Prochains événements</h3>
+                    </div>
+                    <div class="event-menu">
+                        <ul class="nav" id="myTab" role="tablist">
+                            <li class="nav-item">
+                                <a class="active" id="all-tab" data-toggle="tab" href="#all" role="tab" aria-controls="all" aria-selected="true">Tous</a>
+                            </li>
+                            <li class="nav-item">
+                                <a id="university-tab" data-toggle="tab" href="#university" role="tab" aria-controls="university" aria-selected="false">Université</a>
+                            </li>
+                            <li class="nav-item">
+                                <a id="academics-tab" data-toggle="tab" href="#academics" role="tab" aria-controls="academics" aria-selected="false">Académie</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-content" id="myTabContent">
+            <div class="tab-pane fade show active" id="all" role="tabpanel" aria-labelledby="all-tab">
+                <div class="event-slied mt-40">
+                    {# Event 1 #}
+                    <div class="singel-event">
+                        <div class="event-date">
+                            <span>15</span>
+                            <span>Jan</span>
+                            <span class="shape">Shape</span>
+                        </div>
+                        <a href="#">
+                            <h4>Campus clean workshop</h4>
+                        </a>
+                        <ul>
+                            <li><i class="fa fa-clock-o"></i>10:00 Am - 3:00 Pm</li>
+                            <li><i class="fa fa-map-marker"></i>Rc Auditorium</li>
+                        </ul>
+                        <p>Venez participer à notre atelier de nettoyage du campus et contribuer à maintenir un environnement propre et sustainable.</p>
+                        <a href="#" class="main-btn mt-3">Voir les détails</a>
+                    </div>
+
+                    {# Event 2 #}
+                    <div class="singel-event">
+                        <div class="event-date">
+                            <span>20</span>
+                            <span>Jan</span>
+                            <span class="shape">Shape</span>
+                        </div>
+                        <a href="#">
+                            <h4>Tech Summit 2024</h4>
+                        </a>
+                        <ul>
+                            <li><i class="fa fa-clock-o"></i>9:00 Am - 5:00 Pm</li>
+                            <li><i class="fa fa-map-marker"></i>Main Hall</li>
+                        </ul>
+                        <p>Rejoignez-nous pour le plus grand événement technologique de l'année avec des intervenants de renom.</p>
+                        <a href="#" class="main-btn mt-3">Voir les détails</a>
+                    </div>
+
+                    {# Event 3 #}
+                    <div class="singel-event">
+                        <div class="event-date">
+                            <span>25</span>
+                            <span>Jan</span>
+                            <span class="shape">Shape</span>
+                        </div>
+                        <a href="#">
+                            <h4>Conférence environnementale</h4>
+                        </a>
+                        <ul>
+                            <li><i class="fa fa-clock-o"></i>10:00 Am - 2:00 Pm</li>
+                            <li><i class="fa fa-map-marker"></i>Conference Room A</li>
+                        </ul>
+                        <p>Découvrez les dernières innovations en matière de développement durable et d'environnement.</p>
+                        <a href="#" class="main-btn mt-3">Voir les détails</a>
+                    </div>
+
+                    {# Event 4 #}
+                    <div class="singel-event">
+                        <div class="event-date">
+                            <span>28</span>
+                            <span>Jan</span>
+                            <span class="shape">Shape</span>
+                        </div>
+                        <a href="#">
+                            <h4>Journée portes ouvertes</h4>
+                        </a>
+                        <ul>
+                            <li><i class="fa fa-clock-o"></i>8:00 Am - 4:00 Pm</li>
+                            <li><i class="fa fa-map-marker"></i>Campus Principal</li>
+                        </ul>
+                        <p>Venez découvrir notre établissement, rencontrer nos enseignants et visiter nos installations.</p>
+                        <a href="#" class="main-btn mt-3">Voir les détails</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="university" role="tabpanel" aria-labelledby="university-tab">
+                <div class="event-slied mt-40">
+                    <div class="singel-event">
+                        <div class="event-date">
+                            <span>20</span>
+                            <span>Jan</span>
+                            <span class="shape">Shape</span>
+                        </div>
+                        <a href="#">
+                            <h4>Tech Summit 2024</h4>
+                        </a>
+                        <ul>
+                            <li><i class="fa fa-clock-o"></i>9:00 Am - 5:00 Pm</li>
+                            <li><i class="fa fa-map-marker"></i>Main Hall</li>
+                        </ul>
+                        <p>Rejoignez-nous pour le plus grand événement technologique de l'année.</p>
+                        <a href="#" class="main-btn mt-3">Voir les détails</a>
+                    </div>
+
+                    <div class="singel-event">
+                        <div class="event-date">
+                            <span>28</span>
+                            <span>Jan</span>
+                            <span class="shape">Shape</span>
+                        </div>
+                        <a href="#">
+                            <h4>Journée portes ouvertes</h4>
+                        </a>
+                        <ul>
+                            <li><i class="fa fa-clock-o"></i>8:00 Am - 4:00 Pm</li>
+                            <li><i class="fa fa-map-marker"></i>Campus Principal</li>
+                        </ul>
+                        <p>Venez découvrir notre établissement.</p>
+                        <a href="#" class="main-btn mt-3">Voir les détails</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="academics" role="tabpanel" aria-labelledby="academics-tab">
+                <div class="event-slied mt-40">
+                    <div class="singel-event">
+                        <div class="event-date">
+                            <span>15</span>
+                            <span>Jan</span>
+                            <span class="shape">Shape</span>
+                        </div>
+                        <a href="#">
+                            <h4>Campus clean workshop</h4>
+                        </a>
+                        <ul>
+                            <li><i class="fa fa-clock-o"></i>10:00 Am - 3:00 Pm</li>
+                            <li><i class="fa fa-map-marker"></i>Rc Auditorium</li>
+                        </ul>
+                        <p>Venez participer à notre atelier de nettoyage du campus.</p>
+                        <a href="#" class="main-btn mt-3">Voir les détails</a>
+                    </div>
+
+                    <div class="singel-event">
+                        <div class="event-date">
+                            <span>25</span>
+                            <span>Jan</span>
+                            <span class="shape">Shape</span>
+                        </div>
+                        <a href="#">
+                            <h4>Conférence environnementale</h4>
+                        </a>
+                        <ul>
+                            <li><i class="fa fa-clock-o"></i>10:00 Am - 2:00 Pm</li>
+                            <li><i class="fa fa-map-marker"></i>Conference Room A</li>
+                        </ul>
+                        <p>Découvrez les dernières innovations en matière de développement durable.</p>
+                        <a href="#" class="main-btn mt-3">Voir les détails</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
