@@ -1,0 +1,177 @@
+{% extends 'front/base_front.html.twig' %}
+
+{% block title %}Blog - EduSync{% endblock %}
+
+{% block body %}
+{# ======= PAGE BANNER SECTION ======= #}
+<section id="page-banner" class="pt-105 pb-110 bg_cover" data-overlay="8" style="background-image: url('{{ asset('images/page-banner-1.jpg') }}')">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="page-banner-cont">
+                    <h2>Blog</h2>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="{{ path('front_home') }}">Accueil</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Blog</li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{# ======= BLOG SECTION ======= #}
+<section id="blog-part" class="pt-120 pb-120">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="section-title pb-45">
+                    <h5>Notre Blog</h5>
+                    <h2>Derniers Articles</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            {# Blog Post 1 #}
+            <div class="col-lg-4 col-md-6">
+                <div class="singel-blog mt-30">
+                    <div class="blog-thum">
+                        <img src="{{ asset('images/blog/b-1.jpg') }}" alt="Blog">
+                    </div>
+                    <div class="blog-cont">
+                        <a href="#">
+                            <h3>Comment choisir la bonne formation</h3>
+                        </a>
+                        <p>Découvrez nos conseils pour choisir la formation qui correspond le mieux à vos aspirations professionnelles.</p>
+                        <ul>
+                            <li><i class="fa fa-calendar"></i>10 Jan 2024</li>
+                            <li><i class="fa fa-user"></i>Admin</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            {# Blog Post 2 #}
+            <div class="col-lg-4 col-md-6">
+                <div class="singel-blog mt-30">
+                    <div class="blog-thum">
+                        <img src="{{ asset('images/blog/b-2.jpg') }}" alt="Blog">
+                    </div>
+                    <div class="blog-cont">
+                        <a href="#">
+                            <h3>L'importance de l'éducation numérique</h3>
+                        </a>
+                        <p>Pourquoi l'éducation numérique est-elle essentielle dans le monde d'aujourd'hui ?</p>
+                        <ul>
+                            <li><i class="fa fa-calendar"></i>12 Jan 2024</li>
+                            <li><i class="fa fa-user"></i>Admin</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            {# Blog Post 3 #}
+            <div class="col-lg-4 col-md-6">
+                <div class="singel-blog mt-30">
+                    <div class="blog-thum">
+                        <img src="{{ asset('images/blog/ns-1.jpg') }}" alt="Blog">
+                    </div>
+                    <div class="blog-cont">
+                        <a href="#">
+                            <h3>Les métiers d'avenir</h3>
+                        </a>
+                        <p>Explorez les professions qui seront les plus demandées dans les prochaines années.</p>
+                        <ul>
+                            <li><i class="fa fa-calendar"></i>15 Jan 2024</li>
+                            <li><i class="fa fa-user"></i>Admin</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            {# Blog Post 4 #}
+            <div class="col-lg-4 col-md-6">
+                <div class="singel-blog mt-30">
+                    <div class="blog-thum">
+                        <img src="{{ asset('images/blog/n-1.jpg') }}" alt="Blog">
+                    </div>
+                    <div class="blog-cont">
+                        <a href="#">
+                            <h3>Tendances éducatives 2024</h3>
+                        </a>
+                        <p>Les nouvelles approches pédagogiques qui transforment l'éducation.</p>
+                        <ul>
+                            <li><i class="fa fa-calendar"></i>18 Jan 2024</li>
+                            <li><i class="fa fa-user"></i>Admin</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            {# Blog Post 5 #}
+            <div class="col-lg-4 col-md-6">
+                <div class="singel-blog mt-30">
+                    <div class="blog-thum">
+                        <img src="{{ asset('images/blog/n-2.jpg') }}" alt="Blog">
+                    </div>
+                    <div class="blog-cont">
+                        <a href="#">
+                            <h3>Comment réussir ses examens</h3>
+                        </a>
+                        <p>Nos conseils pour optimiser vos révisions et réussir brillamment vos examens.</p>
+                        <ul>
+                            <li><i class="fa fa-calendar"></i>20 Jan 2024</li>
+                            <li><i class="fa fa-user"></i>Admin</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            {# Blog Post 6 #}
+            <div class="col-lg-4 col-md-6">
+                <div class="singel-blog mt-30">
+                    <div class="blog-thum">
+                        <img src="{{ asset('images/blog/n-3.jpg') }}" alt="Blog">
+                    </div>
+                    <div class="blog-cont">
+                        <a href="#">
+                            <h3>L'importance du soutien scolaire</h3>
+                        </a>
+                        <p>Pourquoi le soutien scolaire peut faire la différence dans la réussite des élèves.</p>
+                        <ul>
+                            <li><i class="fa fa-calendar"></i>22 Jan 2024</li>
+                            <li><i class="fa fa-user"></i>Admin</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {# Pagination #}
+        <div class="row">
+            <div class="col-lg-12">
+                <nav class="courses-pagination mt-50">
+                    <ul class="pagination justify-content-center">
+                        <li class="page-item">
+                            <a href="#" aria-label="Previous">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                        </li>
+                        <li class="page-item"><a class="active" href="#">1</a></li>
+                        <li class="page-item"><a href="#">2</a></li>
+                        <li class="page-item"><a href="#">3</a></li>
+                        <li class="page-item">
+                            <a href="#" aria-label="Next">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

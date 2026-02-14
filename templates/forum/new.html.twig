@@ -1,0 +1,121 @@
+{% extends 'front/base_front.html.twig' %}
+
+{% block title %}Create New Topic - Forum{% endblock %}
+
+{% block body %}
+<div class="container my-5">
+    <div class="row">
+        <div class="col-lg-8 offset-lg-2">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0"><i class="fa fa-plus-circle"></i> Create New Discussion Topic</h4>
+                </div>
+                
+                <div class="card-body">
+                    <form id="forum-new-form" action="{{ path('app_forum_new') }}" method="POST" enctype="multipart/form-data">
+                        {# Author will be filled from localStorage profile - hidden input #}
+                        <input type="hidden" id="author" name="author" value="{{ app.user ? app.user.username : '' }}">
+
+                        <div class="form-group mb-3">
+                            <label for="title" class="form-label"><strong>Topic Title *</strong></label>
+                            <input type="text" class="form-control form-control-lg" id="title" name="title" placeholder="What's your topic about?">
+                            <small class="text-muted">Max 255 characters</small>
+                        </div>
+
+                        <div class="form-group mb-4">
+                            <label for="content" class="form-label"><strong>Content *</strong></label>
+                            <textarea class="form-control" id="content" name="content" rows="10" placeholder="Share your thoughts..."></textarea>
+                            <small class="text-muted">Detailed content helps get better discussions</small>
+                        </div>
+
+                        <div class="form-group mb-4">
+                            <label for="link" class="form-label"><strong>External Link (Optional)</strong></label>
+                            <input type="url" class="form-control" id="link" name="link" placeholder="https://example.com/article-or-image">
+                            <small class="text-muted">If provided, it will be attached to the post (image or link).</small>
+                        </div>
+
+                        <div class="form-group mb-4">
+                            <label for="post_image" class="form-label"><strong>Image (Optional)</strong></label>
+                            <input type="file" class="form-control" id="post_image" name="post_image" accept="image/*">
+                            <small class="text-muted">Supported formats: jpg, png, gif, webp</small>
+                        </div>
+
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary btn-lg w-100">
+                                <i class="fa fa-paper-plane"></i> Post Topic
+                            </button>
+                            <a href="{{ path('app_forum_index') }}" class="btn btn-secondary btn-lg w-100 mt-2">
+                                <i class="fa fa-arrow-left"></i> Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card {
+        border-radius: 12px;
+        box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+    }
+
+    .form-control, .form-control-lg {
+        border: 1px solid #e0e0e0;
+        border-radius: 6px;
+        padding: 10px 15px;
+        font-size: 15px;
+    }
+
+    .form-control:focus, .form-control-lg:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    }
+
+    textarea.form-control {
+        resize: vertical;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .btn-lg {
+        padding: 12px 20px;
+        font-size: 16px;
+        border-radius: 6px;
+    }
+
+    .btn-primary {
+        background-color: #1877f2;
+        border-color: #1877f2;
+    }
+
+    .btn-primary:hover {
+        background-color: #0f62d8;
+        border-color: #0f62d8;
+    }
+
+    .form-label {
+        color: #333;
+        margin-bottom: 8px;
+        font-weight: 500;
+    }
+
+    .text-muted {
+        font-size: 13px;
+    }
+</style>
+<script>
+// Ensure author hidden input is populated from profile before submit
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('forum-new-form');
+    if (!form) return;
+    form.addEventListener('submit', function() {
+        const stored = localStorage.getItem('forumAuthor') || 'Anonyme';
+        const authorInput = document.getElementById('author');
+        if (authorInput) {
+            authorInput.value = stored;
+        }
+    });
+});
+</script>
+{% endblock %}
