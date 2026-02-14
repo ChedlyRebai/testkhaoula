@@ -1,0 +1,18 @@
+<script>
+    // Initialize AJAX Search Manager with provided configuration
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchManager = new AjaxSearchManager({
+            apiUrl: '{{ apiUrl }}',
+            searchInputId: '{{ searchInputId }}',
+            sortSelectId: '{{ sortSelectId }}',
+            orderSelectId: '{{ orderSelectId }}',
+            resetBtnId: '{{ resetBtnId }}',
+            containerSelector: '{{ containerSelector }}',
+            entityType: '{{ entityType }}',
+            additionalFilters: {{ additionalFilters|default({})|json_encode()|raw }}
+        });
+
+        // Perform initial search on page load to reflect URL parameters
+        searchManager.performSearch();
+    });
+</script>

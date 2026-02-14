@@ -1,0 +1,338 @@
+{% extends 'front/base_edubin.html.twig' %}
+
+{% block title %}{% if isEdit %}Modifier{% else %}Créer{% endif %} un projet - EduSync{% endblock %}
+
+{% block body %}
+
+    <!--====== PAGE HEADER PART START ======-->
+    
+    <section class="page-header-area" style="background-image: url({{ asset('edubin-images/slider/s-2.jpg') }})" data-overlay="4">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="page-header-cont">
+                        <h1>{% if isEdit %}Modifier un projet{% else %}Créer un nouveau projet{% endif %}</h1>
+                        <p class="text-white">Gérez vos projets</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!--====== PAGE HEADER PART ENDS ======-->
+
+    <!--====== PROJECT FORM PART START ======-->
+    
+    <section class="pt-120 pb-120">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    
+                    <div class="form-card" style="background: white; padding: 40px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                        
+                        <h4 class="mb-30">
+                            {% if isEdit %}
+                                Modifier "{{ projet.nom }}"
+                            {% else %}
+                                Créer un nouveau projet
+                            {% endif %}
+                        </h4>
+
+                        {% for message in app.flashes('error') %}
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                <i class="fa fa-exclamation-circle"></i> {{ message }}
+                                <button type="button" class="close" data-dismiss="alert">×</button>
+                            </div>
+                        {% endfor %}
+
+                        {{ form_start(form, {'attr': {'class': 'project-form', 'novalidate': 'novalidate'}}) }}
+                        
+                        <!-- Form Fields -->
+                        <div class="form-group mb-25">
+                            {{ form_label(form.nom, 'Nom du projet', {'label_attr': {'class': 'form-label'}}) }}
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fa fa-folder"></i></span>
+                                </div>
+                                {{ form_widget(form.nom, {'attr': {'class': 'form-control' ~ (form.nom.vars.errors|length > 0 ? ' is-invalid' : ''), 'placeholder': 'Entrez le nom du projet...'}}) }}
+                            </div>
+                            {{ form_errors(form.nom, {'attr': {'class': 'invalid-feedback d-block'}}) }}
+                        </div>
+
+                        <div class="form-group mb-25">
+                            {{ form_label(form.description, 'Description', {'label_attr': {'class': 'form-label'}}) }}
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fa fa-align-left"></i></span>
+                                </div>
+                                {{ form_widget(form.description, {'attr': {'class': 'form-control' ~ (form.description.vars.errors|length > 0 ? ' is-invalid' : ''), 'placeholder': 'Décrivez votre projet...', 'rows': 6}}) }}
+                            </div>
+                            {{ form_errors(form.description, {'attr': {'class': 'invalid-feedback d-block'}}) }}
+                            <small class="text-muted">Max 1000 caractères recommandés</small>
+                        </div>
+
+                        {% if form.enabled is defined %}
+                            <div class="form-group mb-30">
+                                <div class="custom-control custom-checkbox">
+                                    {{ form_widget(form.enabled, {'attr': {'class': 'custom-control-input'}}) }}
+                                    {{ form_label(form.enabled, 'Active Project', {'label_attr': {'class': 'custom-control-label'}}) }}
+                                </div>
+                                <small class="text-muted">Enable this project to be visible</small>
+                            </div>
+                        {% endif %}
+
+                        {{ form_rest(form) }}
+
+                        <!-- Form Actions -->
+                        <div class="form-actions mt-40">
+                            <button type="submit" class="main-btn mr-2">
+                                <i class="fa fa-save"></i> 
+                                {% if isEdit %}Modifier le projet{% else %}Créer le projet{% endif %}
+                            </button>
+                            <a href="{% if isEdit %}{{ path('projet_show', {'id': projet.id}) }}{% else %}{{ path('projet_list') }}{% endif %}" class="main-btn btn-outline">
+                                <i class="fa fa-times"></i> Annuler
+                            </a>
+                        </div>
+
+                    </div>
+
+                    <!-- Info Box -->
+                    <div class="info-box" style="background: #f0f7ff; padding: 30px; border-radius: 10px; margin-top: 30px; border-left: 4px solid #667eea;">
+                        <h5 class="mb-15"><i class="fa fa-info-circle"></i> Conseils sur les projets</h5>
+                        <ul style="margin-bottom: 0; padding-left: 20px;">
+                            <li>Donnez à votre projet un nom clair et descriptif</li>
+                            <li>Écrivez une description détaillée pour aider votre équipe à comprendre les objectifs du projet</li>
+                            <li>Vous pouvez créer des tâches une fois le projet créé</li>
+                            <li>Activez ou désactivez les projets selon vos besoins</li>
+                        </ul>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!--====== PROJECT FORM PART ENDS ======-->
+
+    <style>
+        .page-header-area {
+            padding: 120px 0;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+        
+        .page-header-area::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.4);
+        }
+        
+        .page-header-cont {
+            position: relative;
+            z-index: 1;
+            color: white;
+            text-align: center;
+        }
+        
+        .page-header-cont h1 {
+            font-size: 48px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .form-card {
+            animation: fadeIn 0.3s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .form-label {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+            display: block;
+        }
+        
+        .form-control {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 12px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        
+        .form-control:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        }
+        
+        .form-control.is-invalid {
+            border-color: #dc3545;
+        }
+        
+        .form-control.is-invalid:focus {
+            border-color: #dc3545;
+            box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+        }
+        
+        .invalid-feedback {
+            color: #dc3545;
+            font-size: 13px;
+            margin-top: 5px;
+        }
+        
+        .custom-control {
+            position: relative;
+            padding-left: 1.5rem;
+            margin: 0;
+        }
+        
+        .custom-control-input {
+            position: absolute;
+            left: 0;
+            z-index: -1;
+            width: 1rem;
+            height: 1.25rem;
+            opacity: 0;
+        }
+        
+        .custom-control-label {
+            position: relative;
+            margin-bottom: 0;
+            vertical-align: top;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        
+        .custom-control-label::before {
+            position: absolute;
+            top: 0.25rem;
+            left: -1.5rem;
+            display: block;
+            width: 1rem;
+            height: 1rem;
+            pointer-events: none;
+            content: '';
+            background-color: #fff;
+            border: 1px solid #adb5bd;
+            border-radius: 0.25rem;
+        }
+        
+        .custom-control-input:checked ~ .custom-control-label::before {
+            color: #fff;
+            border-color: #667eea;
+            background-color: #667eea;
+        }
+        
+        .form-actions {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .main-btn {
+            display: inline-block;
+            padding: 12px 25px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .main-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+            color: white;
+            text-decoration: none;
+        }
+        
+        .main-btn.btn-outline {
+            background: transparent;
+            border: 2px solid #667eea;
+            color: #667eea;
+        }
+        
+        .main-btn.btn-outline:hover {
+            background: #667eea;
+            color: white;
+        }
+        
+        .info-box {
+            animation: slideIn 0.4s ease-in 0.2s backwards;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        .info-box h5 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+        
+        .info-box ul li {
+            margin-bottom: 8px;
+            color: #555;
+            line-height: 1.6;
+        }
+        
+        .alert {
+            padding: 15px 20px;
+            border-radius: 5px;
+            margin-bottom: 25px;
+        }
+        
+        .alert-danger {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        
+        .alert-success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        
+        @media (max-width: 768px) {
+            .page-header-cont h1 {
+                font-size: 32px;
+            }
+            
+            .form-actions {
+                flex-direction: column;
+            }
+            
+            .main-btn {
+                width: 100%;
+                text-align: center;
+            }
+        }
+    </style>
+
+{% endblock %}

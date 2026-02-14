@@ -1,0 +1,108 @@
+{% extends "admin/base_admin.html.twig" %}
+
+{% block title %}{{ tache.titre }} - Admin{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h1>{{ tache.titre }}</h1>
+            <p class="text-muted">Tâche #{{ tache.id }}</p>
+        </div>
+        <div class="col-md-4 text-end">
+            <a href="{{ path('admin_tache_edit', {'id': tache.id}) }}" class="btn btn-warning">
+                <i class="bi bi-pencil"></i> Éditer
+            </a>
+            <a href="{{ path('admin_taches_list', {'projet': tache.projet.id}) }}" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Retour
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Description</h5>
+                    <p class="card-text">{{ tache.description }}</p>
+                    
+                    <hr>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <strong>Projet:</strong><br>
+                            <a href="{{ path('admin_projet_show', {'id': tache.projet.id}) }}">
+                                {{ tache.projet.nom }}
+                            </a>
+                        </div>
+                        <div class="col-md-6">
+                            <strong>Date de création:</strong><br>
+                            {{ tache.dateCreation|date('d/m/Y H:i') }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Détails</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <strong>Statut:</strong><br>
+                            <span class="badge 
+                                {% if tache.statut == 'À faire' %}bg-secondary
+                                {% elseif tache.statut == 'En cours' %}bg-warning
+                                {% elseif tache.statut == 'Terminée' %}bg-success
+                                {% endif %}">
+                                {{ tache.statut }}
+                            </span>
+                        </div>
+                        <div class="col-md-6">
+                            <strong>Priorité:</strong><br>
+                            <span class="badge 
+                                {% if tache.priorite == 1 %}bg-success
+                                {% elseif tache.priorite == 2 %}bg-info
+                                {% elseif tache.priorite == 3 %}bg-danger
+                                {% endif %}">
+                                {% if tache.priorite == 1 %}Basse
+                                {% elseif tache.priorite == 2 %}Normale
+                                {% elseif tache.priorite == 3 %}Haute
+                                {% endif %}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <strong>Statut d'activation:</strong><br>
+                            {% if tache.enabled %}
+                                <span class="badge bg-success">Actif</span>
+                            {% else %}
+                                <span class="badge bg-danger">Inactif</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Actions</h5>
+                </div>
+                <div class="list-group list-group-flush">
+                    <form method="POST" action="{{ path('admin_tache_delete', {'id': tache.id}) }}" 
+                          onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette tâche ?');">
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ tache.id) }}">
+                        <button type="submit" class="list-group-item list-group-item-action text-danger">
+                            <i class="bi bi-trash"></i> Supprimer cette tâche
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,86 @@
+{# Admin Sidebar #}
+<ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+    {# Sidebar - Brand #}
+    <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{{ path('admin_dashboard') }}">
+            <img src="{{ asset('assets/images/logoes.png') }}" alt="EduSync" style="max-height: 50px; max-width: 150px; object-fit: contain;">
+    </a>
+
+    {# Divider #}
+    <hr class="sidebar-divider my-0">
+
+    {# Nav Item - Dashboard #}
+    <li class="nav-item {% if app.request.attributes.get('_route') == 'admin_dashboard' %}active{% endif %}">
+        <a class="nav-link" href="{{ path('admin_dashboard') }}">
+            <i class="fas fa-fw fa-tachometer-alt"></i>
+            <span>Dashboard</span>
+        </a>
+    </li>
+
+    {# Divider #}
+    <hr class="sidebar-divider">
+
+    {# Heading #}
+    <div class="sidebar-heading">
+        Gestion
+    </div>
+
+    {# Nav Item - Projets #}
+    <li class="nav-item {% if app.request.attributes.get('_route') starts with 'admin_projet' %}active{% endif %}">
+        <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseProjects" aria-expanded="false" aria-controls="collapseProjects">
+            <i class="fas fa-fw fa-folder"></i>
+            <span>Projets</span>
+        </a>
+        <div id="collapseProjects" class="collapse {% if app.request.attributes.get('_route') starts with 'admin_projet' %}show{% endif %}" aria-labelledby="headingProjects" data-bs-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <a class="collapse-item" href="{{ path('admin_projets_list') }}">
+                    <i class="fas fa-list"></i> Liste
+                </a>
+                <a class="collapse-item" href="{{ path('admin_projet_new') }}">
+                    <i class="fas fa-plus"></i> Nouveau
+                </a>
+            </div>
+        </div>
+    </li>
+
+    {# Nav Item - Taches #}
+    <li class="nav-item {% if app.request.attributes.get('_route') starts with 'admin_tache' %}active{% endif %}">
+        <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseTasks" aria-expanded="false" aria-controls="collapseTasks">
+            <i class="fas fa-fw fa-tasks"></i>
+            <span>Tâches</span>
+        </a>
+        <div id="collapseTasks" class="collapse {% if app.request.attributes.get('_route') starts with 'admin_tache' %}show{% endif %}" aria-labelledby="headingTasks" data-bs-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <a class="collapse-item" href="{{ path('admin_taches_list') }}">
+                    <i class="fas fa-list"></i> Liste
+                </a>
+                <a class="collapse-item" href="{{ path('admin_tache_new') }}">
+                    <i class="fas fa-plus"></i> Nouvelle
+                </a>
+            </div>
+        </div>
+    </li>
+
+    {# Divider #}
+    <hr class="sidebar-divider">
+
+    {# Heading #}
+    <div class="sidebar-heading">
+        Autres
+    </div>
+
+    {# Nav Item - Front #}
+    <li class="nav-item">
+        <a class="nav-link" href="{{ path('projet_list') }}" target="_blank">
+            <i class="fas fa-fw fa-globe"></i>
+            <span>Voir le Front</span>
+        </a>
+    </li>
+
+    {# Divider #}
+    <hr class="sidebar-divider d-none d-md-block">
+
+    {# Sidebar Toggler #}
+    <div class="text-center d-none d-md-inline">
+        <button class="rounded-circle border-0" id="sidebarToggle"></button>
+    </div>
+</ul>

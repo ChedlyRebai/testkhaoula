@@ -1,0 +1,133 @@
+{% extends "admin/base_admin.html.twig" %}
+
+{% block title %}{{ projet.nom }} - Admin{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h1>{{ projet.nom }}</h1>
+        </div>
+        <div class="col-md-4 text-end">
+            <a href="{{ path('admin_projet_edit', {'id': projet.id}) }}" class="btn btn-warning">
+                <i class="bi bi-pencil"></i> Éditer
+            </a>
+            <a href="{{ path('admin_projets_list') }}" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Retour
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Description</h5>
+                    <p class="card-text">{{ projet.description }}</p>
+                    
+                    <hr>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <strong>Date de création:</strong><br>
+                            {{ projet.dateCreation|date('d/m/Y H:i') }}
+                        </div>
+                        <div class="col-md-6">
+                            <strong>Statut:</strong><br>
+                            {% if projet.enabled %}
+                                <span class="badge bg-success">Actif</span>
+                            {% else %}
+                                <span class="badge bg-danger">Inactif</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mt-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Tâches ({{ projet.taches|length }})</h5>
+                    <a href="{{ path('admin_tache_new', {'projet': projet.id}) }}" class="btn btn-sm btn-primary">
+                        <i class="bi bi-plus"></i> Nouvelle tâche
+                    </a>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Titre</th>
+                                <th>Statut</th>
+                                <th>Priorité</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% if projet.taches|length > 0 %}
+                                {% for tache in projet.taches %}
+                                <tr>
+                                    <td>{{ tache.titre }}</td>
+                                    <td>
+                                        <span class="badge 
+                                            {% if tache.statut == 'À faire' %}bg-secondary
+                                            {% elseif tache.statut == 'En cours' %}bg-warning
+                                            {% elseif tache.statut == 'Terminée' %}bg-success
+                                            {% endif %}">
+                                            {{ tache.statut }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="badge 
+                                            {% if tache.priorite == 1 %}bg-success
+                                            {% elseif tache.priorite == 2 %}bg-info
+                                            {% elseif tache.priorite == 3 %}bg-danger
+                                            {% endif %}">
+                                            {% if tache.priorite == 1 %}Basse
+                                            {% elseif tache.priorite == 2 %}Normale
+                                            {% elseif tache.priorite == 3 %}Haute
+                                            {% endif %}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <a href="{{ path('admin_tache_show', {'id': tache.id}) }}" 
+                                           class="btn btn-sm btn-info" title="Voir">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        <a href="{{ path('admin_tache_edit', {'id': tache.id}) }}" 
+                                           class="btn btn-sm btn-warning" title="Éditer">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            {% else %}
+                                <tr>
+                                    <td colspan="4" class="text-center text-muted py-3">
+                                        Aucune tâche pour ce projet.
+                                    </td>
+                                </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Actions</h5>
+                </div>
+                <div class="list-group list-group-flush">
+                    <form method="POST" action="{{ path('admin_projet_delete', {'id': projet.id}) }}" 
+                          onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce projet ?');">
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ projet.id) }}">
+                        <button type="submit" class="list-group-item list-group-item-action text-danger">
+                            <i class="bi bi-trash"></i> Supprimer ce projet
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

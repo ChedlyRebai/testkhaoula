@@ -1,0 +1,257 @@
+{% extends 'front/base_edubin.html.twig' %}
+
+{% block title %}Projects - EduSync{% endblock %}
+
+{% block body %}
+    <div class="row mb-5">
+        <div class="col-lg-6">
+            <h2>Mes Projets</h2>
+            <p class="text-muted">Gérez tous vos projets</p>
+        </div>
+        <div class="col-lg-6 text-right">
+            <a href="{{ path('app_home') }}" class="btn btn-secondary">Retour à l'accueil</a>
+            <a href="{{ path('projet_new') }}" class="btn btn-primary ml-2">+ Nouveau Projet</a>
+        </div>
+    </div>
+
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="close" data-dismiss="alert">×</button>
+        </div>
+    {% endfor %}
+
+    <div class="row mb-5">
+        <!-- SEARCH BLOCK -->
+        <div class="col-lg-6 pr-3">
+            <div class="search-block">
+                <div class="card shadow-lg h-100" style="border-left: 5px solid #0066cc;">
+                    <div class="card-header bg-primary text-white" style="border-radius: 4px 4px 0 0;">
+                        <div class="d-flex align-items-center" style="gap: 10px;">
+                            <i class="fa fa-search fa-lg"></i>
+                            <h5 class="m-0">Rechercher</h5>
+                            <small class="ml-auto" style="font-size: 11px; opacity: 0.9;">🔗 Dépend des filtres</small>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <p class="text-muted small mb-3">
+                            <i class="fa fa-info-circle"></i> Trouvez rapidement vos projets dans les résultats filtrés
+                        </p>
+                        <div class="form-group mb-3">
+                            <label for="search-input" class="form-label"><strong>Mot-clé</strong></label>
+                            <div class="input-group input-group-lg">
+                                <input type="text" id="search-input" class="form-control" placeholder="Entrez le nom ou une partie de la description..." value="{{ search ?? '' }}" style="border-radius: 4px 0 0 4px;">
+                                <div class="input-group-append">
+                                    <button id="search-btn" class="btn btn-primary" type="button" style="border-radius: 0;">
+                                        <i class="fa fa-search"></i> Chercher
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <button id="search-clear-btn" class="btn btn-sm btn-outline-secondary w-100">
+                            <i class="fa fa-times"></i> Effacer la recherche
+                        </button>
+                        <div id="search-results-count" class="text-muted small mt-3 p-2" style="background: #f8f9fa; border-radius: 4px; border-left: 3px solid #0066cc;">
+                            {% if search %}
+                                <strong>🔗 Recherche active :</strong> "{{ search }}"
+                            {% else %}
+                                <em>🔗 Entrez un mot-clé pour affiner les résultats filtrés...</em>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- FILTER BLOCK -->
+        <div class="col-lg-6 pl-3">
+            <div class="filter-block">
+                <div class="card shadow-lg h-100" style="border-left: 5px solid #17a2b8;">
+                    <div class="card-header bg-info text-white" style="border-radius: 4px 4px 0 0;">
+                        <div class="d-flex align-items-center" style="gap: 10px;">
+                            <i class="fa fa-sliders-h fa-lg"></i>
+                            <h5 class="m-0">Filtrer et Trier</h5>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <p class="text-muted small mb-3">Organisez et triez les résultats</p>
+                        <div class="form-group mb-3">
+                            <label for="sort-select" class="form-label"><strong>Trier par</strong></label>
+                            <select id="sort-select" class="form-control form-control-lg" style="border-radius: 4px;">
+                                <option value="date" {% if sort == 'date' %}selected{% endif %}>📅 Date (récemment modifiés)</option>
+                                <option value="nom" {% if sort == 'nom' %}selected{% endif %}>🔤 Nom (A-Z alphabétique)</option>
+                                <option value="id" {% if sort == 'id' %}selected{% endif %}>🆔 ID</option>
+                            </select>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="order-select" class="form-label"><strong>Ordre</strong></label>
+                            <select id="order-select" class="form-control form-control-lg" style="border-radius: 4px;">
+                                <option value="DESC" {% if order == 'DESC' %}selected{% endif %}>⬇️ Décroissant (Plus récent)</option>
+                                <option value="ASC" {% if order == 'ASC' %}selected{% endif %}>⬆️ Croissant (Plus ancien)</option>
+                            </select>
+                        </div>
+                        <button id="filter-reset-btn" class="btn btn-info text-white w-100">
+                            <i class="fa fa-redo"></i> Réinitialiser les filtres
+                        </button>
+                        <div id="filter-status" class="text-muted small mt-3 p-2" style="background: #f0f7ff; border-radius: 4px; border-left: 3px solid #17a2b8;">
+                            <strong>Filtres actifs :</strong><br>
+                            Tri: <strong>{{ sort == 'date' ? 'Date' : (sort == 'nom' ? 'Nom' : 'ID') }}</strong> |
+                            Ordre: <strong>{{ order == 'DESC' ? 'Décroissant' : 'Croissant' }}</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--====== PROJECT LIST PART START ======-->
+    
+    <section class="pt-120 pb-120">
+        <div class="container">
+            
+            {% for message in app.flashes('success') %}
+                <div class="alert alert-success alert-dismissible fade show" role="alert" style="margin-bottom: 30px;">
+                    <i class="fa fa-check-circle"></i> {{ message }}
+                    <button type="button" class="close" data-dismiss="alert">×</button>
+                </div>
+            {% endfor %}
+
+            <!-- Filters Section -->
+            <div class="row mb-50">
+                <div class="col-lg-12">
+                    <div class="filter-section" style="background: #f5f5f5; padding: 30px; border-radius: 10px;">
+                        <h5 class="mb-20">Filtrer et Rechercher</h5>
+                        
+                        <div class="row">
+                            <div class="col-md-4 mb-20">
+                                <label for="search-input" class="form-label"><strong>Rechercher</strong></label>
+                                <input type="text" id="search-input" class="form-control" placeholder="Nom du projet ou description..." value="{{ search ?? '' }}">
+                            </div>
+                            <div class="col-md-3 mb-20">
+                                <label for="sort-select" class="form-label"><strong>Trier par</strong></label>
+                                <select id="sort-select" class="form-control">
+                                    <option value="date" {% if sort == 'date' %}selected{% endif %}>Date</option>
+                                    <option value="nom" {% if sort == 'nom' %}selected{% endif %}>Nom (A-Z)</option>
+                                    <option value="id" {% if sort == 'id' %}selected{% endif %}>ID</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3 mb-20">
+                                <label for="order-select" class="form-label"><strong>Ordre</strong></label>
+                                <select id="order-select" class="form-control">
+                                    <option value="DESC" {% if order == 'DESC' %}selected{% endif %}>Décroissant</option>
+                                    <option value="ASC" {% if order == 'ASC' %}selected{% endif %}>Croissant</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2 mb-20 d-flex align-items-end">
+                                <button id="reset-filters" class="btn btn-outline-primary btn-block">Reset</button>
+                            </div>
+                        </div>
+                        
+                        <div class="text-muted small mt-2">
+                            <span id="results-count">{{ projets|length }} result(s)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Projects Grid -->
+            <div class="row" id="projets-grid">
+                {% if projets is empty %}
+                    <div class="col-lg-12">
+                        <div class="alert alert-info text-center py-5">
+                            <p>Aucun projet trouvé.</p>
+                            <a href="{{ path('projet_new') }}" class="main-btn mt-3">Créez votre premier projet</a>
+                        </div>
+                    </div>
+                {% else %}
+                    {% for projet in projets %}
+                    <div class="col-lg-6 col-md-6 mb-40">
+                        <div class="course-card">
+                            <div class="course-img">
+                                <img src="{{ asset('edubin-images/course/cu-' ~ ((projet.id - 1) % 5 + 1) ~ '.jpg') }}" alt="Project">
+                                <div class="course-overlay">
+                                    <a href="{{ path('projet_show', {'id': projet.id}) }}" class="main-btn">Afficher</a>
+                                </div>
+                            </div>
+                            <div class="course-cont">
+                                <div class="course-header">
+                                    <h4><a href="{{ path('projet_show', {'id': projet.id}) }}">{{ projet.nom }}</a></h4>
+                                </div>
+                                <p>{{ projet.description|slice(0, 100) }}{% if projet.description|length > 100 %}...{% endif %}</p>
+                                <div class="course-footer">
+                                    <div class="course-meta">
+                                        <span class="meta-date"><i class="fa fa-calendar"></i> {{ projet.dateCreation|date('d/m/Y') }}</span>
+                                    </div>
+                                    <div class="course-action">
+                                        <a href="{{ path('projet_show', {'id': projet.id}) }}" class="btn btn-sm btn-outline-primary">Voir</a>
+                                        <a href="{{ path('tache_list', {'projet': projet.id}) }}" class="btn btn-sm btn-outline-info">Tâches</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            <!-- Add New Project Button -->
+            {% if projets is not empty %}
+            <div class="row mt-50">
+                <div class="col-lg-12 text-center">
+                    <a href="{{ path('projet_new') }}" class="main-btn">Ajouter un nouveau projet</a>
+                </div>
+            </div>
+            {% endif %}
+
+        </div> <!-- container -->
+    </section>
+    
+    <!--====== PROJECT LIST PART ENDS ======-->
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const filterManager = new FilterManager({
+                apiUrl: '{{ path("projet_api_search") }}',
+                tableBodySelector: '#projets-grid',
+                searchInputId: 'search-input',
+                sortSelectId: 'sort-select',
+                orderSelectId: 'order-select',
+                entityType: 'projets',
+                renderAsGrid: true // Use grid layout instead of table
+            });
+
+            // Load filters from URL if present
+            const urlParams = new URLSearchParams(window.location.search);
+            const searchVal = urlParams.get('search');
+            const sortVal = urlParams.get('sort');
+            const orderVal = urlParams.get('order');
+
+            if (searchVal) {
+                document.getElementById('search-input').value = decodeURIComponent(searchVal);
+            }
+            if (sortVal) {
+                document.getElementById('sort-select').value = decodeURIComponent(sortVal);
+            }
+            if (orderVal) {
+                document.getElementById('order-select').value = decodeURIComponent(orderVal);
+            }
+
+            // If any filter is set in URL, trigger search
+            if (searchVal || (sortVal && sortVal !== 'date') || (orderVal && orderVal !== 'DESC')) {
+                filterManager.performSearch();
+            }
+
+            // Reset button
+            const resetBtn = document.getElementById('reset-filters');
+            if (resetBtn) {
+                resetBtn.addEventListener('click', function() {
+                    document.getElementById('search-input').value = '';
+                    document.getElementById('sort-select').value = 'date';
+                    document.getElementById('order-select').value = 'DESC';
+                    filterManager.performSearch();
+                });
+            }
+        });
+    </script>
+
+{% endblock %}

@@ -1,0 +1,185 @@
+{% extends 'front/base_edubin.html.twig' %}
+
+{% block title %}{{ projet.nom }} - EduSync{% endblock %}
+
+{% block body %}
+<nav class="navbar navbar-expand-lg navbar-light bg-light shadow mb-4">
+    <div class="container">
+        <a class="navbar-brand" href="{{ path('app_home') }}">
+            <img src="{{ asset('assets/images/logoes.png') }}" alt="EduSync" style="max-height: 40px; object-fit: contain;">
+        </a>
+    </div>
+</nav>
+    <section class="pt-120 pb-120">
+        <div class="container">
+    <div class="row mb-4">
+        <div class="col-lg-6">
+            <a href="{{ path('projet_list') }}" class="btn btn-secondary">← Retour à la liste</a>
+            <a href="{{ path('app_home') }}" class="btn btn-light ml-2">Accueil</a>
+        </div>
+    </div>
+
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fa fa-check-circle"></i> {{ message }}
+            <button type="button" class="close" data-dismiss="alert">×</button>
+        </div>
+    {% endfor %}
+
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">{{ projet.nom }}</h3>
+                </div>
+                    <div class="project-detail-card" style="background: white; padding: 40px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin-bottom: 40px;">
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <p><strong>Créé le:</strong> {{ projet.dateCreation|date('d/m/Y à H:i') }}</p>
+                        </div>
+                    </div>
+                    
+                    <hr>
+                    
+                    <h5>Description</h5>
+                    <p class="text-muted">{{ projet.description }}</p>
+
+                    {% if projet.taches is not empty %}
+                        <hr>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="mb-0">Tâches ({{ projet.taches|length }})</h5>
+                            <div>
+                                <a href="{{ path('tache_list', {'projet': projet.id}) }}" class="btn btn-sm btn-info mr-2">
+                                    <i class="fa fa-list"></i> Voir toutes
+                                </a>
+                                <a href="{{ path('tache_new', {'projet': projet.id}) }}" class="btn btn-sm btn-success">
+                                    <i class="fa fa-plus"></i> Ajouter une tâche
+                                </a>
+                            </div>
+                        </div>
+                        <div class="list-group">
+                            {% for tache in projet.taches %}
+                                <a href="{{ path('tache_show', {'id': tache.id}) }}" class="list-group-item list-group-item-action">
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <h6 class="mb-1">{{ tache.titre }}</h6>
+                                        <div>
+                                            {% if tache.statut == 'À faire' %}
+                                                <span class="badge badge-secondary">À faire</span>
+                                            {% elseif tache.statut == 'En cours' %}
+                                                <span class="badge badge-info">En cours</span>
+                                            {% elseif tache.statut == 'Terminée' %}
+                                                <span class="badge badge-success">Terminée</span>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <small class="text-muted">{{ tache.description|slice(0, 60) }}{% if tache.description|length > 60 %}...{% endif %}</small>
+                                </a>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="alert alert-info d-flex justify-content-between align-items-center">
+                            <div>
+                                <i class="fa fa-info-circle"></i> Aucune tâche associée à ce projet.
+                            </div>
+                            <a href="{{ path('tache_new', {'projet': projet.id}) }}" class="btn btn-sm btn-success">
+                                <i class="fa fa-plus"></i> Créer une tâche
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+                        <!-- Action Buttons -->
+                        <div class="action-buttons mt-50">
+                            <a href="{{ path('projet_edit', {'id': projet.id}) }}" class="main-btn me-3">
+                                <i class="fa fa-pencil"></i> Modifier le projet
+                            </a>
+                            <a href="{{ path('tache_new', {'projet': projet.id}) }}" class="main-btn me-3" style="background: transparent; border: 2px solid #667eea; color: #667eea;">
+                                <i class="fa fa-plus"></i> Ajouter une tâche
+                            </a>
+                            <a href="{{ path('projet_list') }}" class="main-btn" style="background: transparent; border: 2px solid #667eea; color: #667eea;">
+                                <i class="fa fa-arrow-left"></i> Retour aux projets
+                            </a>
+                            <form method="POST" action="{{ path('projet_delete', {'id': projet.id}) }}" style="display: inline; margin-left: 10px;" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce projet? Toutes les tâches associées seront supprimées.');">
+                                <input type="hidden" name="_method" value="DELETE">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ projet.id) }}">
+                                <button type="submit" class="btn btn-outline-danger btn-sm">
+                                    <i class="fa fa-trash"></i> Supprimer
+                                </button>
+                            </form>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Sidebar -->
+                <div class="col-lg-4">
+                    <!-- Quick Actions Card -->
+                    <div class="sidebar-card" style="background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin-bottom: 30px;">
+                        <h5 class="mb-20">Actions rapides</h5>
+                        
+                        <a href="{{ path('tache_list', {'projet': projet.id}) }}" class="btn btn-block btn-outline-primary mb-10">
+                            <i class="fa fa-list"></i> Voir toutes les tâches
+                        </a>
+                        
+                        <a href="{{ path('tache_new', {'projet': projet.id}) }}" class="btn btn-block btn-outline-primary">
+                            <i class="fa fa-plus-circle"></i> Nouvelle tâche
+                        </a>
+                    </div>
+
+                    <!-- Project Summary Card -->
+                    <div class="project-summary" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin-bottom: 30px;">
+                        <h5 class="mb-20">Résumé du projet</h5>
+                        
+                        <div class="summary-item mb-15">
+                            <span class="summary-label" style="color: rgba(255,255,255,0.8);">Nombre de tâches</span>
+                            <p class="summary-value" style="font-size: 28px; font-weight: bold; margin: 5px 0;">
+                                {{ projet.taches|length }}
+                            </p>
+                        </div>
+
+                        {% set totalTaches = projet.taches|length %}
+                        {% set completedTaches = projet.taches|filter(t => t.statut == 'Terminée')|length %}
+                        {% set completionPercentage = totalTaches > 0 ? (completedTaches / totalTaches * 100)|round : 0 %}
+
+                        <div class="summary-item mb-15">
+                            <span class="summary-label" style="color: rgba(255,255,255,0.8);">Achèvement</span>
+                            <div style="margin-top: 8px;">
+                                <div style="background: rgba(255,255,255,0.3); border-radius: 10px; height: 8px; overflow: hidden;">
+                                    <div style="background: #4ade80; height: 100%; width: {{ completionPercentage }}%; transition: width 0.3s ease;"></div>
+                                </div>
+                                <p style="font-size: 12px; margin-top: 5px;">{{ completedTaches }}/{{ totalTaches }} ({{ completionPercentage }}%)</p>
+                            </div>
+                        </div>
+
+                        <div class="summary-item">
+                            <span class="summary-label" style="color: rgba(255,255,255,0.8);">Created</span>
+                            <p style="font-size: 14px; margin: 5px 0;">{{ projet.dateCreation|date('M d, Y') }}</p>
+                        </div>
+                    </div>
+
+                    <!-- Status Info Card -->
+                    <div class="status-card" style="background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                        <h5 class="mb-20">Status Information</h5>
+                        
+                        <div class="status-item mb-15">
+                            <label class="text-muted"><strong>Current Status</strong></label>
+                            <p class="mt-10">
+                                {% if projet.enabled %}
+                                    <span class="badge badge-success" style="padding: 8px 15px;">Active</span>
+                                {% else %}
+                                    <span class="badge badge-secondary" style="padding: 8px 15px;">Inactive</span>
+                                {% endif %}
+                            </p>
+                        </div>
+
+                        <div class="status-item">
+                            <label class="text-muted"><strong>Last Update</strong></label>
+                            <p class="mt-10">{{ projet.dateCreation|date('M d, Y H:i') }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+{% endblock %}

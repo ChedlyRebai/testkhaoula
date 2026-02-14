@@ -1,0 +1,372 @@
+{% extends 'front/base_edubin.html.twig' %}
+
+{% block title %}{{ tache.titre }} - Tâches - EduSync{% endblock %}
+
+{% block body %}
+
+    <!--====== PAGE HEADER PART START ======-->
+    
+    <section class="page-header-area" style="background-image: url({{ asset('edubin-images/slider/s-3.jpg') }})" data-overlay="4">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="page-header-cont">
+                        <h1>{{ tache.titre }}</h1>
+                        <p class="text-white">Détails de la tâche</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!--====== PAGE HEADER PART ENDS ======-->
+
+    <!--====== TASK DETAIL PART START ======-->
+    
+    <section class="pt-120 pb-120">
+        <div class="container">
+            
+            {% for message in app.flashes('success') %}
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="fa fa-check-circle"></i> {{ message }}
+                    <button type="button" class="close" data-dismiss="alert">×</button>
+                </div>
+            {% endfor %}
+
+            <div class="row">
+                <!-- Main Content -->
+                <div class="col-lg-8">
+                    <div class="task-detail-card" style="background: white; padding: 40px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                        
+                        <!-- Task Info Section -->
+                        <div class="task-info mb-40">
+                            <div class="row mb-30">
+                                <div class="col-sm-6">
+                                    <div class="info-item">
+                                        <label class="text-muted"><strong>Projet</strong></label>
+                                        <p class="mt-2">
+                                            <a href="{{ path('projet_show', {'id': tache.projet.id}) }}" class="text-primary">
+                                                {{ tache.projet.nom }}
+                                            </a>
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="info-item">
+                                        <label class="text-muted"><strong>Date de création</strong></label>
+                                        <p class="mt-2">{{ tache.dateCreation|date('M d, Y') }}</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row mb-30">
+                                <div class="col-sm-6">
+                                    <div class="info-item">
+                                        <label class="text-muted"><strong>État</strong></label>
+                                        <p class="mt-2">
+                                            {% if tache.statut == 'À faire' %}
+                                                <span class="badge badge-secondary" style="padding: 8px 15px; font-size: 13px;">À faire</span>
+                                            {% elseif tache.statut == 'En cours' %}
+                                                <span class="badge badge-primary" style="padding: 8px 15px; font-size: 13px;">En cours</span>
+                                            {% elseif tache.statut == 'Terminée' %}
+                                                <span class="badge badge-success" style="padding: 8px 15px; font-size: 13px;">Terminée</span>
+                                            {% else %}
+                                                <span class="badge badge-warning" style="padding: 8px 15px; font-size: 13px;">{{ tache.statut }}</span>
+                                            {% endif %}
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="info-item">
+                                        <label class="text-muted"><strong>Priorité</strong></label>
+                                        <p class="mt-2">
+                                            {% if tache.priorite == 1 %}
+                                                <span class="badge badge-success" style="padding: 8px 15px; font-size: 13px;">Basse</span>
+                                            {% elseif tache.priorite == 2 %}
+                                                <span class="badge badge-warning" style="padding: 8px 15px; font-size: 13px;">Normale</span>
+                                            {% elseif tache.priorite == 3 %}
+                                                <span class="badge badge-danger" style="padding: 8px 15px; font-size: 13px;">Haute</span>
+                                            {% endif %}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Description -->
+                        <div class="description mb-40">
+                            <h5 class="mb-20">Description</h5>
+                            <p class="text-justify">
+                                {{ tache.description|nl2br }}
+                            </p>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="action-buttons">
+                            <a href="{{ path('tache_edit', {'id': tache.id}) }}" class="main-btn me-3">
+                                <i class="fa fa-pencil"></i> Modifier la tâche
+                            </a>
+                            <a href="{{ path('tache_list') }}" class="main-btn btn-outline">
+                                <i class="fa fa-arrow-left"></i> Retour aux tâches
+                            </a>
+                            <form method="POST" action="{{ path('tache_delete', {'id': tache.id}) }}" style="display: inline; margin-left: 10px;" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette tâche ?');">
+                                <input type="hidden" name="_method" value="DELETE">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ tache.id) }}">
+                                <button type="submit" class="btn btn-outline-danger btn-sm">
+                                    <i class="fa fa-trash"></i> Supprimer
+                                </button>
+                            </form>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Sidebar -->
+                <div class="col-lg-4">
+                    <!-- Related Info Card -->
+                    <div class="sidebar-card" style="background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin-bottom: 30px;">
+                        <h5 class="mb-20">Actions rapides</h5>
+                        
+                        <a href="{{ path('projet_show', {'id': tache.projet.id}) }}" class="btn btn-block btn-outline-primary mb-10">
+                            <i class="fa fa-folder-open"></i> Afficher le projet
+                        </a>
+                        
+                        <a href="{{ path('tache_new', {'projet': tache.projet.id}) }}" class="btn btn-block btn-outline-primary">
+                            <i class="fa fa-plus"></i> Ajouter une tâche liée
+                        </a>
+                    </div>
+
+                    <!-- Project Card -->
+                    <div class="project-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                        <h5 class="mb-15">Projet associé</h5>
+                        <p style="margin-bottom: 20px;">
+                            <strong>{{ tache.projet.nom }}</strong>
+                        </p>
+                        <p class="small mb-20" style="opacity: 0.9;">
+                            Créé le {{ tache.projet.dateCreation|date('M d, Y') }}
+                        </p>
+                        <a href="{{ path('projet_show', {'id': tache.projet.id}) }}" class="btn btn-sm" style="background: white; color: #667eea; border: none;">
+                            Voir le projet complet
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+    
+    <!--====== TASK DETAIL PART ENDS ======-->
+
+    <style>
+        .page-header-area {
+            padding: 120px 0;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+        
+        .page-header-area::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.4);
+        }
+        
+        .page-header-cont {
+            position: relative;
+            z-index: 1;
+            color: white;
+            text-align: center;
+        }
+        
+        .page-header-cont h1 {
+            font-size: 48px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .task-detail-card {
+            animation: fadeIn 0.3s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .info-item {
+            margin-bottom: 15px;
+        }
+        
+        .info-item label {
+            display: block;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .info-item p {
+            margin: 0;
+            font-size: 16px;
+            color: #333;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .badge-primary {
+            background: #007bff;
+            color: white;
+        }
+        
+        .badge-success {
+            background: #28a745;
+            color: white;
+        }
+        
+        .badge-warning {
+            background: #ffc107;
+            color: #333;
+        }
+        
+        .badge-danger {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .badge-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .main-btn {
+            display: inline-block;
+            padding: 12px 25px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .main-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+            color: white;
+            text-decoration: none;
+        }
+        
+        .main-btn.btn-outline {
+            background: transparent;
+            border: 2px solid #667eea;
+            color: #667eea;
+        }
+        
+        .main-btn.btn-outline:hover {
+            background: #667eea;
+            color: white;
+        }
+        
+        .text-justify {
+            text-align: justify;
+            line-height: 1.8;
+            color: #555;
+        }
+        
+        .delete-section {
+            padding-top: 30px;
+            margin-top: 40px;
+        }
+        
+        .btn-outline-danger {
+            border: 2px solid #dc3545;
+            color: #dc3545;
+            background: transparent;
+        }
+        
+        .btn-outline-danger:hover {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .sidebar-card {
+            animation: fadeInUp 0.4s ease-in 0.1s backwards;
+        }
+        
+        .project-card {
+            animation: fadeInUp 0.4s ease-in 0.2s backwards;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .btn-block {
+            width: 100%;
+            text-align: center;
+        }
+        
+        .btn-outline-primary {
+            border: 2px solid #667eea;
+            color: #667eea;
+            background: transparent;
+            border-radius: 5px;
+            padding: 10px 15px;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-outline-primary:hover {
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+        }
+        
+        @media (max-width: 768px) {
+            .page-header-cont h1 {
+                font-size: 32px;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .main-btn {
+                width: 100%;
+                text-align: center;
+            }
+        }
+    </style>
+
+{% endblock %}

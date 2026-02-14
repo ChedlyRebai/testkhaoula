@@ -1,0 +1,505 @@
+{% extends 'front/base_edubin.html.twig' %}
+
+{% block title %}Projects - EduSync{% endblock %}
+
+{% block body %}
+
+    <!--====== PAGE HEADER PART START ======-->
+    
+    <section class="page-header-area" style="background-image: url({{ asset('edubin-images/slider/s-3.jpg') }})" data-overlay="4">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="page-header-cont">
+                        <h1>My Projects</h1>
+                        <p class="text-white">Manage all your projects in one place</p>
+                    </div>
+                </div>
+            </div> <!-- row -->
+        </div> <!-- container -->
+    </section>
+    
+    <!--====== PAGE HEADER PART ENDS ======-->
+
+    <!--====== TOP ACTIONS PART START ======-->
+    <section class="pt-60 pb-30" style="background: #f5f5f5;">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 text-right">
+                    <a href="{{ path('tache_list') }}" class="btn btn-hero">
+                        <i class="fa fa-tasks"></i> Tâches
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!--====== TOP ACTIONS PART ENDS ======-->
+
+    <!--====== PROJECT LIST PART START ======-->
+    
+    <section class="pt-120 pb-120">
+        <div class="container">
+            
+            {% for message in app.flashes('success') %}
+                <div class="alert alert-success alert-dismissible fade show" role="alert" style="margin-bottom: 30px;">
+                    <i class="fa fa-check-circle"></i> {{ message }}
+                    <button type="button" class="close" data-dismiss="alert">×</button>
+                </div>
+            {% endfor %}
+
+            <!-- Filters Section -->
+            <div class="row mb-50">
+                <div class="col-lg-12">
+                    <div class="filter-section filter-hero shadow-sm" style="background: #fbfbfb; padding: 22px; border-radius: 12px;">
+                        <h5 class="mb-3">Filtrer et Rechercher</h5>
+
+                        <div class="row">
+                            <div class="col-lg-8">
+                                <div class="row gx-3 gy-2 align-items-end">
+                                    <div class="col-12">
+                                        <label for="search-input" class="form-label"><strong>Rechercher</strong></label>
+                                        <div class="d-flex">
+                                            <input type="text" id="search-input" class="form-control me-3" placeholder="Nom du projet ou description..." value="{{ search ?? '' }}">
+                                            <button id="search-btn" class="btn btn-hero ms-auto">
+                                                <i class="fa fa-search"></i>
+                                                <span class="d-none d-md-inline"> Chercher</span>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label for="sort-select" class="form-label"><strong>Trier par</strong></label>
+                                        <select id="sort-select" class="form-select">
+                                            <option value="date" {% if sort == 'date' %}selected{% endif %}>Date</option>
+                                            <option value="nom" {% if sort == 'nom' %}selected{% endif %}>Nom (A-Z)</option>
+                                            <option value="id" {% if sort == 'id' %}selected{% endif %}>ID</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label">&nbsp;</label>
+                                        <div>
+                                            <button id="sort-btn" class="btn btn-hero w-100">
+                                                <i class="fa fa-sort"></i> Appliquer Tri
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label for="date-from" class="form-label"><strong>À partir du</strong></label>
+                                        <input type="date" id="date-from" class="form-control">
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label for="date-to" class="form-label"><strong>Jusqu'au</strong></label>
+                                        <input type="date" id="date-to" class="form-control">
+                                    </div>
+
+                                    <div class="col-12">
+                                        <button id="filter-btn" class="btn btn-hero w-100">
+                                            <i class="fa fa-calendar"></i> Filtrer
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4 d-flex flex-column gap-3">
+                                <div>
+                                    <button id="reset-filters" class="btn btn-hero-reset w-100" style="height:64px;">
+                                        <i class="fa fa-redo"></i> Réinitialiser
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="text-muted small mt-3">
+                            <span id="results-count">Cliquez sur les boutons pour filtrer</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Projects Grid -->
+            <div class="row" id="projets-grid">
+                {% if projets is empty %}
+                    <div class="col-lg-12">
+                        <div class="alert alert-info text-center py-5">
+                            <p>Aucun projet trouvé.</p>
+                            <a href="{{ path('projet_new') }}" class="main-btn mt-3">Créez votre premier projet</a>
+                        </div>
+                    </div>
+                {% else %}
+                    {% for projet in projets %}
+                    <div class="col-lg-6 col-md-6 mb-40">
+                        <div class="course-card">
+                            <div class="course-img">
+                                <img src="{{ asset('edubin-images/course/cu-' ~ ((projet.id - 1) % 5 + 1) ~ '.jpg') }}" alt="Project">
+                                <div class="course-overlay">
+                                    <a href="{{ path('projet_show', {'id': projet.id}) }}" class="main-btn">Afficher</a>
+                                </div>
+                            </div>
+                            <div class="course-cont">
+                                <div class="course-header">
+                                    <h4><a href="{{ path('projet_show', {'id': projet.id}) }}">{{ projet.nom }}</a></h4>
+                                </div>
+                                <p>{{ projet.description|slice(0, 100) }}{% if projet.description|length > 100 %}...{% endif %}</p>
+
+                                <!-- Tasks Section -->
+                                <div class="tasks-preview mt-3 mb-3">
+                                    <strong class="d-block mb-2">
+                                        <i class="fa fa-tasks"></i> Tâches ({{ projet.taches|length }})
+                                    </strong>
+                                    {% if projet.taches|length > 0 %}
+                                        <div style="max-height: 120px; overflow-y: auto; border: 1px solid #e0e0e0; border-radius: 5px; padding: 8px; background: #fafafa;">
+                                            {% for tache in projet.taches|slice(0, 3) %}
+                                                <div style="padding: 5px 0; border-bottom: 1px solid #efefef; font-size: 12px;">
+                                                    <span style="font-weight: 600;">{{ tache.titre }}</span>
+                                                    <br>
+                                                    {% if tache.statut == 'Terminée' %}
+                                                        <span class="badge badge-success" style="padding: 2px 6px; font-size: 10px;">✓ {{ tache.statut }}</span>
+                                                    {% elseif tache.statut == 'En cours' %}
+                                                        <span class="badge badge-primary" style="padding: 2px 6px; font-size: 10px;">⟳ {{ tache.statut }}</span>
+                                                    {% else %}
+                                                        <span class="badge badge-secondary" style="padding: 2px 6px; font-size: 10px;">{{ tache.statut }}</span>
+                                                    {% endif %}
+                                                </div>
+                                            {% endfor %}
+                                            {% if projet.taches|length > 3 %}
+                                                <div style="padding: 8px 0; text-align: center; color: #999; font-size: 11px;">
+                                                    +{{ projet.taches|length - 3 }} tâche(s) de plus...
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    {% else %}
+                                        <p class="text-muted small mb-0">Aucune tâche créée.</p>
+                                    {% endif %}
+                                </div>
+
+                                <div class="course-footer">
+                                    <div class="course-meta">
+                                        <span class="meta-date"><i class="fa fa-calendar"></i> {{ projet.dateCreation|date('d/m/Y') }}</span>
+                                    </div>
+                                    <div class="course-action">
+                                        <a href="{{ path('projet_show', {'id': projet.id}) }}" class="btn btn-sm btn-outline-primary">Voir</a>
+                                        <a href="{{ path('tache_new', {'projet': projet.id}) }}" class="btn btn-sm btn-outline-success">+Tâche</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            <!-- Add New Project Button -->
+            {% if projets is not empty %}
+            <div class="row mt-50">
+                <div class="col-lg-12 text-center">
+                    <a href="{{ path('projet_new') }}" class="main-btn">Ajouter un nouveau projet</a>
+                </div>
+            </div>
+            {% endif %}
+
+        </div> <!-- container -->
+    </section>
+    
+    <!--====== PROJECT LIST PART ENDS ======-->
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Custom render callback for grid layout
+            const customRender = (container, data) => {
+                if (data.count === 0) {
+                    container.innerHTML = `
+                        <div class="col-lg-12">
+                            <div class="alert alert-info text-center py-5">
+                                <p>Aucun projet trouvé.</p>
+                                <a href="{{ path('projet_new') }}" class="main-btn mt-3">Créez votre premier projet</a>
+                            </div>
+                        </div>
+                    `;
+                    document.getElementById('results-count').textContent = '0 résultat(s)';
+                    return;
+                }
+
+                let html = data.projets.map(projet => {
+                    const imageIndex = ((projet.id - 1) % 5 + 1);
+                    const tasksHtml = projet.taches && projet.taches.length > 0
+                        ? `<div style="max-height: 120px; overflow-y: auto; border: 1px solid #e0e0e0; border-radius: 5px; padding: 8px; background: #fafafa;">
+                            ${projet.taches.slice(0, 3).map(tache => {
+                                let badgeClass = 'badge-secondary';
+                                if (tache.statut === 'Terminée') badgeClass = 'badge-success';
+                                if (tache.statut === 'En cours') badgeClass = 'badge-primary';
+                                return `<div style="padding: 5px 0; border-bottom: 1px solid #efefef; font-size: 12px;">
+                                    <span style="font-weight: 600;">${tache.titre}</span><br>
+                                    <span class="badge ${badgeClass}" style="padding: 2px 6px; font-size: 10px;">${tache.statut}</span>
+                                </div>`;
+                            }).join('')}
+                            ${projet.taches.length > 3 ? `<div style="padding: 8px 0; text-align: center; color: #999; font-size: 11px;">+${projet.taches.length - 3} tâche(s) de plus...</div>` : ''}
+                        </div>`
+                        : `<p class="text-muted small mb-0">Aucune tâche créée.</p>`;
+
+                    return `
+                        <div class="col-lg-6 col-md-6 mb-40">
+                            <div class="course-card">
+                                <div class="course-img">
+                                    <img src="{{ asset('edubin-images/course/cu-') }}${imageIndex}.jpg" alt="Project">
+                                    <div class="course-overlay">
+                                        <a href="/projets/${projet.id}" class="main-btn">Afficher</a>
+                                    </div>
+                                </div>
+                                <div class="course-cont">
+                                    <div class="course-header">
+                                        <h4><a href="/projets/${projet.id}">${projet.nom}</a></h4>
+                                    </div>
+                                    <p>${projet.description}</p>
+                                    <div class="tasks-preview mt-3 mb-3">
+                                        <strong class="d-block mb-2"><i class="fa fa-tasks"></i> Tâches (${projet.taches ? projet.taches.length : 0})</strong>
+                                        ${tasksHtml}
+                                    </div>
+                                    <div class="course-footer">
+                                        <div class="course-meta">
+                                            <span class="meta-date"><i class="fa fa-calendar"></i> ${projet.dateCreation}</span>
+                                        </div>
+                                        <div class="course-action">
+                                            <a href="/projets/${projet.id}" class="btn btn-sm btn-outline-primary">Voir</a>
+                                            <a href="/taches/new?projet=${projet.id}" class="btn btn-sm btn-outline-success">+Tâche</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+                container.innerHTML = html;
+                document.getElementById('results-count').textContent = `${data.count} résultat(s)`;
+                console.log(`✅ Rendered ${data.count} result(s)`);
+            };
+
+            const searchManager = new AjaxSearchManager({
+                apiUrl: '{{ path("projet_api_search") }}',
+                containerSelector: '#projets-grid',
+                searchInputId: 'search-input',
+                sortSelectId: 'sort-select',
+                dateFromId: 'date-from',
+                dateToId: 'date-to',
+                searchBtnId: 'search-btn',
+                sortBtnId: 'sort-btn',
+                filterBtnId: 'filter-btn',
+                resetBtnId: 'reset-filters',
+                entityType: 'projets',
+                renderCallback: customRender
+            });
+
+            // Load filters from URL if present and perform initial search
+            const urlParams = new URLSearchParams(window.location.search);
+            const searchVal = urlParams.get('search');
+            const sortVal = urlParams.get('sort');
+            const dateFromVal = urlParams.get('dateFrom');
+            const dateToVal = urlParams.get('dateTo');
+
+            if (searchVal) {
+                document.getElementById('search-input').value = decodeURIComponent(searchVal);
+                searchManager.currentSearch = decodeURIComponent(searchVal);
+            }
+            if (sortVal) {
+                document.getElementById('sort-select').value = decodeURIComponent(sortVal);
+                searchManager.currentSort = decodeURIComponent(sortVal);
+            }
+            if (dateFromVal) {
+                document.getElementById('date-from').value = decodeURIComponent(dateFromVal);
+                searchManager.currentDateFrom = decodeURIComponent(dateFromVal);
+            }
+            if (dateToVal) {
+                document.getElementById('date-to').value = decodeURIComponent(dateToVal);
+                searchManager.currentDateTo = decodeURIComponent(dateToVal);
+            }
+
+            // If any filter is set in URL, trigger search
+            if (searchVal || (sortVal && sortVal !== 'date') || dateFromVal || dateToVal) {
+                searchManager.performSearch();
+            }
+        });
+    </script>
+
+    <style>
+        .page-header-area {
+            padding: 120px 0;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+        
+        .page-header-area::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.4);
+        }
+        
+        .page-header-cont {
+            position: relative;
+            z-index: 1;
+            color: white;
+            text-align: center;
+        }
+        
+        .page-header-cont h1 {
+            font-size: 48px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .filter-section {
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .course-card {
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .course-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.15);
+        }
+        
+        .course-img {
+            position: relative;
+            overflow: hidden;
+            height: 200px;
+        }
+        
+        .course-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .course-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .course-card:hover .course-overlay {
+            opacity: 1;
+        }
+        
+        .course-cont {
+            padding: 25px;
+        }
+        
+        .course-header h4 {
+            margin: 0;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        
+        .course-header a {
+            color: #333;
+            text-decoration: none;
+        }
+        
+        .course-header a:hover {
+            color: #667eea;
+        }
+        
+        .course-footer {
+            margin-top: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid #eee;
+            padding-top: 15px;
+        }
+        
+        .course-meta span {
+            display: inline-block;
+            color: #777;
+            font-size: 13px;
+            margin-right: 10px;
+        }
+        
+        .course-action {
+            display: flex;
+            gap: 10px;
+        }
+
+        /* Compact filter styles */
+        .filter-compact {
+            padding: 12px !important;
+            background: #fafafa;
+        }
+
+        .filter-compact .form-label {
+            font-size: 0.9rem;
+            margin-bottom: .25rem;
+        }
+
+        .filter-compact .form-control,
+        .filter-compact .form-select,
+        .filter-compact input[type="date"] {
+            height: calc(1.4em + .6rem);
+            padding: .25rem .5rem;
+            font-size: .9rem;
+        }
+
+        .filter-compact .main-btn {
+            padding: .35rem .6rem;
+            font-size: .95rem;
+            border-radius: .35rem;
+        }
+
+        .filter-compact .row > [class^="col-"] {
+            margin-bottom: 8px;
+        }
+
+        /* Hero buttons and colors */
+        .btn-hero {
+            background: #ffc107;
+            color: #0b2240;
+            border: none;
+            font-weight: 700;
+            border-radius: 8px;
+            padding: 0.65rem 1rem;
+            box-shadow: none;
+        }
+
+        .btn-hero:hover { filter: brightness(.95); }
+
+        .btn-hero-reset {
+            background: #ffc107;
+            color: #0b2240;
+            border: none;
+            font-weight: 700;
+            border-radius: 8px;
+            padding: 0.65rem 1rem;
+        }
+
+        .filter-hero {
+            background: linear-gradient(180deg, #ffffff, #fbfbfb);
+            border: 1px solid rgba(0,0,0,0.03);
+        }
+
+        .filter-hero .form-control { border-radius: 6px; }
+
+        .filter-hero h5 { font-size: 1.2rem; margin-bottom: 0.75rem; }
+    </style>
+
+{% endblock %}

@@ -1,0 +1,70 @@
+{% extends 'front/base_edubin.html.twig' %}
+
+{% block title %}{{ isEdit ? 'Éditer' : 'Créer' }} un Projet - EduSync{% endblock %}
+
+{% block body %}
+
+    <!--====== PAGE HEADER PART START ======-->
+    
+    <section class="page-header-area" style="background-image: url({{ asset('edubin-images/slider/s-3.jpg') }})" data-overlay="4">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="page-header-cont">
+                        <h1>{% if isEdit %}Éditer le projet{% else %}Créer un nouveau projet{% endif %}</h1>
+                        <p class="text-white">Gérez vos projets efficacement</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!--====== PAGE HEADER PART ENDS ======-->
+
+    <section class="pt-120 pb-120">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    
+                    <div class="form-card" style="background: white; padding: 40px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                        
+                        <h4 class="mb-30">
+                            {% if isEdit %}
+                                Éditer "{{ projet.nom }}"
+                            {% else %}
+                                Créer un nouveau projet
+                            {% endif %}
+                        </h4>
+
+                        {{ form_start(form, {'attr': {'class': 'project-form', 'novalidate': 'novalidate'}}) }}
+                        
+                        {{ form_errors(form) }}
+
+                        <div class="form-group mb-25">
+                            {{ form_label(form.nom, 'Nom du projet', {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_widget(form.nom, {'attr': {'class': 'form-control', 'placeholder': 'Nom du projet'}}) }}
+                            {{ form_errors(form.nom, {'attr': {'class': 'invalid-feedback d-block'}}) }}
+                        </div>
+
+                        <div class="form-group mb-25">
+                            {{ form_label(form.description, 'Description', {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_widget(form.description, {'attr': {'class': 'form-control', 'rows': 6, 'placeholder': 'Décrivez le projet...'}}) }}
+                            {{ form_errors(form.description, {'attr': {'class': 'invalid-feedback d-block'}}) }}
+                        </div>
+
+                        {{ form_rest(form) }}
+
+                        <div class="form-actions mt-40" style="justify-content: center; display: flex; gap: 15px;">
+                            <button type="submit" class="main-btn mr-2">{{ isEdit ? 'Enregistrer les changements' : 'Créer le projet' }}</button>
+                            <a href="{{ path('projet_list') }}" class="main-btn btn-outline">Annuler</a>
+                        </div>
+
+                        {{ form_end(form) }}
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+{% endblock %}

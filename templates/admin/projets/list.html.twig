@@ -1,0 +1,138 @@
+{% extends "admin/base_admin.html.twig" %}
+
+{% block title %}Admin - Projets{% endblock %}
+
+{% block stylesheets %}
+    {# Optional CSS #}
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h1>Gestion des Projets</h1>
+        </div>
+        <div class="col-md-4 text-end">
+            <a href="{{ path('admin_projet_new') }}" class="btn btn-primary">
+                <i class="bi bi-plus"></i> Nouveau Projet
+            </a>
+        </div>
+    </div>
+
+    <!-- Search & Filter Card -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label for="search" class="form-label">Rechercher</label>
+                    <input type="text" class="form-control" id="search" 
+                           placeholder="Chercher un projet..." value="{{ search }}">
+                </div>
+                <div class="col-md-2">
+                    <label for="sort" class="form-label">Trier par</label>
+                    <select class="form-select" id="sort">
+                        <option value="date" {% if sort == 'date' %}selected{% endif %}>Date</option>
+                        <option value="nom" {% if sort == 'nom' %}selected{% endif %}>Nom</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label for="order" class="form-label">Ordre</label>
+                    <select class="form-select" id="order">
+                        <option value="DESC" {% if order == 'DESC' %}selected{% endif %}>Décroissant</option>
+                        <option value="ASC" {% if order == 'ASC' %}selected{% endif %}>Croissant</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="button" class="btn btn-outline-secondary w-100" id="reset-btn">
+                        <i class="bi bi-arrow-counterclockwise"></i> Réinitialiser
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Projets Table -->
+    <div class="card">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Nom</th>
+                        <th>Description</th>
+                        <th>Date</th>
+                        <th>Tâches</th>
+                        <th>Statut</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="projets-tbody">
+                    {% if projets|length > 0 %}
+                        {% for projet in projets %}
+                        <tr>
+                            <td>
+                                <strong>{{ projet.nom }}</strong>
+                            </td>
+                            <td>
+                                {{ projet.description[:50] }}{% if projet.description|length > 50 %}...{% endif %}
+                            </td>
+                            <td>
+                                <small class="text-muted">{{ projet.dateCreation|date('d/m/Y') }}</small>
+                            </td>
+                            <td>
+                                <span class="badge bg-info">{{ projet.taches|length }}</span>
+                            </td>
+                            <td>
+                                {% if projet.enabled %}
+                                    <span class="badge bg-success">Actif</span>
+                                {% else %}
+                                    <span class="badge bg-danger">Inactif</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <a href="{{ path('admin_projet_show', {'id': projet.id}) }}" 
+                                   class="btn btn-sm btn-info" title="Voir">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                                <a href="{{ path('admin_projet_edit', {'id': projet.id}) }}" 
+                                   class="btn btn-sm btn-warning" title="Éditer">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <form method="POST" action="{{ path('admin_projet_delete', {'id': projet.id}) }}" 
+                                      class="d-inline" onsubmit="return confirm('Êtes-vous sûr ?');">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ projet.id) }}">
+                                    <button type="submit" class="btn btn-sm btn-danger" title="Supprimer">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="6" class="text-center text-muted py-4">
+                                Aucun projet trouvé.
+                            </td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{{ include('assets/ajax-search-init.html.twig', {
+    apiUrl: path('api_projets_search'),
+    searchInputId: 'search',
+    sortSelectId: 'sort',
+    orderSelectId: 'order',
+    resetBtnId: 'reset-btn',
+    containerSelector: '#projets-tbody',
+    entityType: 'projets'
+}) }}
+{% endblock %}
+
+{% block javascripts %}
+    {{ encore_entry_script_tags('app') }}
+    <script src="{{ asset('ajax-search.js') }}"></script>
+{% endblock %}

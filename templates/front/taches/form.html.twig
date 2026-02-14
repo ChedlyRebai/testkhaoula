@@ -1,0 +1,194 @@
+{% extends 'front/base_edubin.html.twig' %}
+
+{% block title %}{% if isEdit %}Modifier{% else %}Créer{% endif %} Tâche - EduSync{% endblock %}
+
+{% block body %}
+
+    <!--====== PAGE HEADER PART START ======-->
+    
+    <section class="page-header-area" style="background-image: url({{ asset('edubin-images/slider/s-3.jpg') }})" data-overlay="4">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="page-header-cont">
+                        <h1>{% if isEdit %}Modifier la tâche{% else %}Créer une nouvelle tâche{% endif %}</h1>
+                        <p class="text-white">Gérez vos tâches efficacement</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!--====== PAGE HEADER PART ENDS ======-->
+
+    <!--====== TASK FORM PART START ======-->
+    
+    <section class="pt-120 pb-120">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    
+                    <div class="form-card" style="background: white; padding: 40px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                        
+                        <h4 class="mb-30">
+                            {% if isEdit %}
+                                Modifier "{{ tache.titre }}"
+                            {% else %}
+                                Créer une nouvelle tâche
+                            {% endif %}
+                        </h4>
+
+                        {% for message in app.flashes('error') %}
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                <i class="fa fa-exclamation-circle"></i> {{ message }}
+                                <button type="button" class="close" data-dismiss="alert">×</button>
+                            </div>
+                        {% endfor %}
+
+                        {{ form_start(form, {'attr': {'class': 'task-form', 'novalidate': 'novalidate'}}) }}
+                        
+                        <!-- Project Selection -->
+                        <div class="form-group mb-25">
+                            {{ form_label(form.projet, 'Projet', {'label_attr': {'class': 'form-label'}}) }}
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fa fa-folder-open"></i></span>
+                                </div>
+                                {{ form_widget(form.projet, {'attr': {'class': 'form-control' ~ (form.projet.vars.errors|length > 0 ? ' is-invalid' : '')}}) }}
+                            </div>
+                            {{ form_errors(form.projet, {'attr': {'class': 'invalid-feedback d-block'}}) }}
+                        </div>
+
+                        <!-- Title Field -->
+                        <div class="form-group mb-25">
+                            {{ form_label(form.titre, 'Titre de la tâche', {'label_attr': {'class': 'form-label'}}) }}
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fa fa-tag"></i></span>
+                                </div>
+                                {{ form_widget(form.titre, {'attr': {'class': 'form-control' ~ (form.titre.vars.errors|length > 0 ? ' is-invalid' : ''), 'placeholder': 'Entrez le titre de la tâche...'}}) }}
+                            </div>
+                            {{ form_errors(form.titre, {'attr': {'class': 'invalid-feedback d-block'}}) }}
+                        </div>
+
+                        <!-- Description Field -->
+                        <div class="form-group mb-25">
+                            {{ form_label(form.description, 'Description', {'label_attr': {'class': 'form-label'}}) }}
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fa fa-align-left"></i></span>
+                                </div>
+                                {{ form_widget(form.description, {'attr': {'class': 'form-control' ~ (form.description.vars.errors|length > 0 ? ' is-invalid' : ''), 'placeholder': 'Décrivez la tâche...', 'rows': 5}}) }}
+                            </div>
+                            {{ form_errors(form.description, {'attr': {'class': 'invalid-feedback d-block'}}) }}
+                        </div>
+
+                        <!-- Status Field -->
+                        <div class="form-group mb-25">
+                            {{ form_label(form.statut, 'État', {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_widget(form.statut, {'attr': {'class': 'form-control' ~ (form.statut.vars.errors|length > 0 ? ' is-invalid' : '')}}) }}
+                            {{ form_errors(form.statut, {'attr': {'class': 'invalid-feedback d-block'}}) }}
+                        </div>
+
+                        <!-- Priority Field -->
+                        <div class="form-group mb-25">
+                            {{ form_label(form.priorite, 'Priorité', {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_widget(form.priorite, {'attr': {'class': 'form-control' ~ (form.priorite.vars.errors|length > 0 ? ' is-invalid' : '')}}) }}
+                            {{ form_errors(form.priorite, {'attr': {'class': 'invalid-feedback d-block'}}) }}
+                        </div>
+
+                        {% if form.enabled is defined %}
+                            <div class="form-group mb-30">
+                                <div class="custom-control custom-checkbox">
+                                    {{ form_widget(form.enabled, {'attr': {'class': 'custom-control-input'}}) }}
+                                    {{ form_label(form.enabled, 'Activer cette tâche', {'label_attr': {'class': 'custom-control-label'}}) }}
+                                </div>
+                            </div>
+                        {% endif %}
+
+                        {{ form_rest(form) }}
+
+                        <!-- Form Actions -->
+                        <div class="form-actions mt-40">
+                            <button type="submit" class="main-btn mr-2">
+                                <i class="fa fa-save"></i> 
+                                {% if isEdit %}Modifier la tâche{% else %}Créer la tâche{% endif %}
+                            </button>
+                            <a href="{%- if isEdit -%}{{ path('tache_show', {'id': tache.id}) }}{%- else -%}{{ path('tache_list') }}{%- endif -%}" class="main-btn btn-outline">
+                                <i class="fa fa-times"></i> Annuler
+                            </a>
+                        </div>
+
+                    </div>
+
+                    <!-- Info Box -->
+                    <div class="info-box" style="background: #f0f7ff; padding: 30px; border-radius: 10px; margin-top: 30px; border-left: 4px solid #667eea;">
+                        <h5 class="mb-15"><i class="fa fa-lightbulb-o"></i> Conseils pour les tâches</h5>
+                        <ul style="margin-bottom: 0; padding-left: 20px;">
+                            <li><strong>Soyez précis :</strong> Les titres clairs vous aident à rester organisé</li>
+                            <li><strong>Définissez la priorité :</strong> Les tâches haute priorité apparaissent en premier</li>
+                            <li><strong>Suivez l'état :</strong> Mettez à jour l'état en travaillant sur la tâche</li>
+                            <li><strong>Lien au projet :</strong> Organisez les tâches en les assignant à des projets</li>
+                        </ul>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!--====== TASK FORM PART ENDS ======-->
+
+    <style>
+        .page-header-area {
+            padding: 120px 0;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+        
+        .page-header-area::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.4);
+        }
+        
+        .page-header-cont {
+            position: relative;
+            z-index: 1;
+            color: white;
+            text-align: center;
+        }
+        
+        .form-card {
+            animation: fadeIn 0.3s ease-in;
+            overflow: visible;
+            position: relative;
+            z-index: 1100; /* ensure form sits above floating helpers */
+        }
+        
+        .form-actions {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 18px;
+            width: 100%;
+            justify-content: center; /* center buttons horizontally */
+            clear: both;
+            box-sizing: border-box;
+        }
+
+        /* Ensure buttons don't overflow the card and remain visible */
+        .form-card, .form-actions { position: relative; z-index: 1000; }
+        .form-actions .main-btn { min-width: 140px; }
+
+        /* Reposition floating helpers so they don't overlap the form */
+        .back-to-top { right: 20px; bottom: 20px; z-index: 900; }
+        .support-button .button { position: fixed; right: 20px; bottom: 100px; z-index: 900; }
+    </style>
+
+{% endblock %}

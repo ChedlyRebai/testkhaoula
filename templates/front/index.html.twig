@@ -1,0 +1,176 @@
+{% extends 'front/base_edubin.html.twig' %}
+
+{% block title %}EduSync - Gestion de Projets et de Tâches{% endblock %}
+
+{% block body %}
+
+    <!--====== SLIDER PART START ======-->
+    <section id="slider-part" class="slider-active">
+        <div class="single-slider bg_cover pt-150" style="background-image: url({{ asset('edubin-images/slider/s-1.jpg') }})" data-overlay="4">
+            <div class="container">
+                <div class="row">
+                    <div class="col-xl-7 col-lg-9">
+                        <div class="slider-cont">
+                            <h1 data-animation="bounceInLeft" data-delay="1s">Bienvenue sur EduSync</h1>
+                            <p data-animation="fadeInUp" data-delay="1.3s">La plateforme éducative collaborative qui transforme la façon dont vous apprenez, collaborez et réussissez. Avec intelligence artificielle, collaboration en temps réel et outils intégrés, EduSync est votre écosystème d'apprentissage complet.</p>
+                            <ul>
+                                <li><a data-animation="fadeInUp" data-delay="1.6s" class="main-btn" href="{{ path('projet_list') }}">Explorez les projets</a></li>
+                                <li><a data-animation="fadeInUp" data-delay="1.9s" class="main-btn main-btn-2" href="{{ path('course_list') }}">Découvrez les cours</a></li>
+                                <li><a data-animation="fadeInUp" data-delay="2.2s" class="main-btn main-btn-2" href="{{ path('event_list') }}">Consultez les événements</a></li>
+                                <li><a data-animation="fadeInUp" data-delay="2.5s" class="main-btn main-btn-2" href="{{ path('tache_list') }}">Gérez les tâches</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!--====== SLIDER PART ENDS ======-->
+
+    <!--====== FEATURE PART START ======-->
+    <section id="feature-part" class="pt-120 pb-120">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 offset-lg-2">
+                    <div class="section-title text-center mb-50">
+                        <h2>Tout ce dont vous avez besoin</h2>
+                        <p>Une plateforme complète pour transformer votre expérience éducative</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-4 col-md-6 col-sm-12">
+                    <div class="single-feature">
+                        <div class="feature-icon">
+                            <i class="fa fa-users"></i>
+                        </div>
+                        <h4>Collaboration en temps réel</h4>
+                        <p>Travaillez ensemble instantanément avec vos collègues et étudiants, peu importe où vous êtes.</p>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-6 col-sm-12">
+                    <div class="single-feature">
+                        <div class="feature-icon">
+                            <i class="fa fa-brain"></i>
+                        </div>
+                        <h4>Intelligence artificielle</h4>
+                        <p>Bénéficiez de recommandations intelligentes et d'analyses avancées pour optimiser votre apprentissage.</p>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-6 col-sm-12">
+                    <div class="single-feature">
+                        <div class="feature-icon">
+                            <i class="fa fa-graduation-cap"></i>
+                        </div>
+                        <h4>Cours intégrés</h4>
+                        <p>Créez, partagez et suivez des contenus éducatifs structurés avec outils pédagogiques avancés.</p>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-6 col-sm-12">
+                    <div class="single-feature">
+                        <div class="feature-icon">
+                            <i class="fa fa-folder"></i>
+                        </div>
+                        <h4>Gestion de projets</h4>
+                        <p>Organisez vos travaux de groupe et projets avec suivi détaillé et collaboration seamless.</p>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-6 col-sm-12">
+                    <div class="single-feature">
+                        <div class="feature-icon">
+                            <i class="fa fa-calendar"></i>
+                        </div>
+                        <h4>Calendrier intégré</h4>
+                        <p>Planifiez vos événements, deadlines et sessions collaboratives dans un calendrier centralisé.</p>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-6 col-sm-12">
+                    <div class="single-feature">
+                        <div class="feature-icon">
+                            <i class="fa fa-line-chart"></i>
+                        </div>
+                        <h4>Analyse et rapports</h4>
+                        <p>Suivez vos progrès avec des tableaux de bord détaillés et des rapports personnalisés.</p>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-6 col-sm-12">
+                    <div class="single-feature">
+                        <div class="feature-icon">
+                            <i class="fa fa-cloud"></i>
+                        </div>
+                        <h4>Accès partout</h4>
+                        <p>Travaillez de n'importe où avec une plateforme cloud sécurisée et toujours disponible.</p>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-6 col-sm-12">
+                    <div class="single-feature">
+                        <div class="feature-icon">
+                            <i class="fa fa-lock"></i>
+                        </div>
+                        <h4>Sécurisé et fiable</h4>
+                        <p>Vos données sont protégées avec les derniers standards de sécurité et de confidentialité.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!--====== FEATURE PART ENDS ======-->
+
+    <!--====== ABOUT PART START ======-->
+    <section id="about-part" class="pt-120 pb-120 gray-bg">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="about-cont">
+                        <div class="section-title">
+                            <h2>Pourquoi EduSync ?</h2>
+                        </div>
+                        <p>EduSync est bien plus qu'une plateforme de gestion de projets. C'est un écosystème complet conçu pour transformer l'apprentissage et la collaboration dans les institutions éducatives. Nous combinons la puissance de l'intelligence artificielle, la collaboration en temps réel et des outils intégrés pour créer une expérience d'apprentissage supérieure.</p>
+                        <ul>
+                            <li>Apprentissage collaboratif et engageant</li>
+                            <li>Intelligence artificielle adaptative</li>
+                            <li>Gestion intégrée complète</li>
+                            <li>Suivis détaillés et insights</li>
+                            <li>Sécurité et conformité garanties</li>
+                        </ul>
+                        <a href="{{ path('projet_list') }}" class="main-btn mt-30">Découvrir maintenant</a>
+                    </div>
+                </div>
+
+                <div class="col-lg-6">
+                    <div class="about-img">
+                        <img src="{{ asset('edubin-images/about/about.jpg') }}" alt="About EduSync">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!--====== ABOUT PART ENDS ======-->
+
+    <!--====== CALL TO ACTION PART START ======-->
+    <section id="cta-part" class="pt-80 pb-80" style="background-image: url({{ asset('edubin-images/slider/s-1.jpg') }}); background-size: cover; background-position: center;">
+        <div class="cta-overlay pt-120 pb-120">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-8 offset-lg-2">
+                        <div class="cta-cont text-center text-white">
+                            <h2>Rejoignez la communauté EduSync</h2>
+                            <p>Transformez votre approche de l'apprentissage et de la collaboration. Commencez votre parcours avec EduSync dès aujourd'hui.</p>
+                            <a href="{{ path('projet_list') }}" class="main-btn mt-30">Commencer l'exploration</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!--====== CALL TO ACTION PART ENDS ======-->
+
+{% endblock %}

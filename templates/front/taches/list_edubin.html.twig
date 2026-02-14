@@ -1,0 +1,302 @@
+{% extends 'front/base_edubin.html.twig' %}
+
+{% block title %}Tasks - EduSync{% endblock %}
+
+{% block body %}
+
+    <!--====== PAGE HEADER PART START ======-->
+    
+    <section class="page-header-area" style="background-image: url({{ asset('edubin-images/slider/s-3.jpg') }})" data-overlay="4">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="page-header-cont">
+                        <h1>Mes tâches</h1>
+                        <p class="text-white">Gérez toutes vos tâches efficacement</p>
+                    </div>
+                </div>
+            </div> <!-- row -->
+        </div> <!-- container -->
+    </section>
+    
+    <!--====== PAGE HEADER PART ENDS ======-->
+
+    <!--====== TASK LIST PART START ======-->
+    
+    <section class="pt-120 pb-120">
+        <div class="container">
+            
+            {% for message in app.flashes('success') %}
+                <div class="alert alert-success alert-dismissible fade show" role="alert" style="margin-bottom: 30px;">
+                    <i class="fa fa-check-circle"></i> {{ message }}
+                    <button type="button" class="close" data-dismiss="alert">×</button>
+                </div>
+            {% endfor %}
+
+            <!-- Filters Section -->
+            <div class="row mb-50">
+                <div class="col-lg-12">
+                    <div class="filter-section" style="background: #f5f5f5; padding: 30px; border-radius: 10px;">
+                        <h5 class="mb-20">Filtrer et Rechercher</h5>
+                        
+                        <div class="row">
+                            <div class="col-md-3 mb-20">
+                                <label for="search-input" class="form-label"><strong>Rechercher</strong></label>
+                                <input type="text" id="search-input" class="form-control" placeholder="Titre de la tâche..." value="{{ search ?? '' }}">
+                            </div>
+                            <div class="col-md-2 mb-20">
+                                <label for="filter-projet" class="form-label"><strong>Projet</strong></label>
+                                <select id="filter-projet" class="form-control">
+                                    <option value="">Tous</option>
+                                    {% for p in projets %}
+                                        <option value="{{ p.id }}" {% if projet and projet.id == p.id %}selected{% endif %}>
+                                            {{ p.nom }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-2 mb-20">
+                                <label for="filter-statut" class="form-label"><strong>État</strong></label>
+                                <select id="filter-statut" class="form-control">
+                                    <option value="">Tous</option>
+                                    <option value="À faire" {% if statut == 'À faire' %}selected{% endif %}>À faire</option>
+                                    <option value="En cours" {% if statut == 'En cours' %}selected{% endif %}>En cours</option>
+                                    <option value="Terminée" {% if statut == 'Terminée' %}selected{% endif %}>Terminée</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2 mb-20">
+                                <label for="filter-priorite" class="form-label"><strong>Priorité</strong></label>
+                                <select id="filter-priorite" class="form-control">
+                                    <option value="">Tous</option>
+                                    <option value="1" {% if priorite == 1 %}selected{% endif %}>Basse</option>
+                                    <option value="2" {% if priorite == 2 %}selected{% endif %}>Normale</option>
+                                    <option value="3" {% if priorite == 3 %}selected{% endif %}>Haute</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2 mb-20">
+                                <label for="sort-select" class="form-label"><strong>Trier par</strong></label>
+                                <select id="sort-select" class="form-control">
+                                    <option value="date" {% if sort == 'date' %}selected{% endif %}>Date</option>
+                                    <option value="titre" {% if sort == 'titre' %}selected{% endif %}>Titre</option>
+                                    <option value="statut" {% if sort == 'statut' %}selected{% endif %}>État</option>
+                                    <option value="priorite" {% if sort == 'priorite' %}selected{% endif %}>Priorité</option>
+                                </select>
+                            </div>
+                            <div class="col-md-1 mb-20">
+                                <label for="order-select" class="form-label"><strong>Ordre</strong></label>
+                                <select id="order-select" class="form-control">
+                                    <option value="DESC" {% if order == 'DESC' %}selected{% endif %}>↓</option>
+                                    <option value="ASC" {% if order == 'ASC' %}selected{% endif %}>↑</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-12">
+                                <button id="reset-filters" class="btn btn-outline-primary btn-sm">Réinitialiser les filtres</button>
+                                <span id="results-count" class="text-muted small ml-3">{{ taches|length }} résultat(s)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tasks Table -->
+            {% if taches is empty %}
+                <div class="alert alert-info text-center py-5">
+                    <i class="fa fa-tasks fa-2x mb-3"></i>
+                    <p>Aucune tâche trouvée.</p>
+                    <a href="{{ path('tache_new') }}" class="main-btn mt-3">Créer votre première tâche</a>
+                </div>
+            {% else %}
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover" id="taches-table-body">
+                        <thead class="bg-light">
+                            <tr>
+                                <th>ID</th>
+                                <th>Titre</th>
+                                <th>Projet</th>
+                                <th>État</th>
+                                <th>Priorité</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for tache in taches %}
+                            <tr>
+                                <td><strong>#{{ tache.id }}</strong></td>
+                                <td>{{ tache.titre }}</td>
+                                <td>
+                                    <a href="{{ path('tache_list', {'projet': tache.projet.id}) }}">
+                                        {{ tache.projet.nom }}
+                                    </a>
+                                </td>
+                                <td>
+                                    {% if tache.statut == 'À faire' %}
+                                        <span class="badge badge-secondary">À faire</span>
+                                    {% elseif tache.statut == 'En cours' %}
+                                        <span class="badge badge-primary">En cours</span>
+                                    {% elseif tache.statut == 'Terminée' %}
+                                        <span class="badge badge-success">Terminée</span>
+                                    {% else %}
+                                        <span class="badge badge-warning">{{ tache.statut }}</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if tache.priorite == 1 %}
+                                        <span class="badge badge-success">Basse</span>
+                                    {% elseif tache.priorite == 2 %}
+                                        <span class="badge badge-warning">Normale</span>
+                                    {% elseif tache.priorite == 3 %}
+                                        <span class="badge badge-danger">Haute</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <a href="{{ path('tache_show', {'id': tache.id}) }}" class="btn btn-sm btn-outline-primary">Voir</a>
+                                    <a href="{{ path('tache_edit', {'id': tache.id}) }}" class="btn btn-sm btn-outline-warning">Modifier</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="row mt-50">
+                    <div class="col-lg-12 text-center">
+                        <a href="{{ path('tache_new') }}" class="main-btn">Ajouter une nouvelle tâche</a>
+                    </div>
+                </div>
+            {% endif %}
+
+        </div> <!-- container -->
+    </section>
+    
+    <!--====== TASK LIST PART ENDS ======-->
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const filterManager = new FilterManager({
+                apiUrl: '{{ path("tache_api_search") }}',
+                tableBodySelector: '#taches-table-body tbody',
+                searchInputId: 'search-input',
+                sortSelectId: 'sort-select',
+                orderSelectId: 'order-select',
+                filterSelectIds: ['filter-projet', 'filter-statut', 'filter-priorite'],
+                entityType: 'taches'
+            });
+
+            // Load filters from URL if present
+            const urlParams = new URLSearchParams(window.location.search);
+            const searchVal = urlParams.get('search');
+            const projetVal = urlParams.get('projet');
+            const statutVal = urlParams.get('statut');
+            const prioriteVal = urlParams.get('priorite');
+            const sortVal = urlParams.get('sort');
+            const orderVal = urlParams.get('order');
+
+            if (searchVal) {
+                document.getElementById('search-input').value = decodeURIComponent(searchVal);
+            }
+            if (projetVal) {
+                document.getElementById('filter-projet').value = decodeURIComponent(projetVal);
+            }
+            if (statutVal) {
+                document.getElementById('filter-statut').value = decodeURIComponent(statutVal);
+            }
+            if (prioriteVal) {
+                document.getElementById('filter-priorite').value = decodeURIComponent(prioriteVal);
+            }
+            if (sortVal) {
+                document.getElementById('sort-select').value = decodeURIComponent(sortVal);
+            }
+            if (orderVal) {
+                document.getElementById('order-select').value = decodeURIComponent(orderVal);
+            }
+
+            // If any filter is set in URL, trigger search
+            if (searchVal || projetVal || statutVal || prioriteVal || (sortVal && sortVal !== 'date') || (orderVal && orderVal !== 'DESC')) {
+                filterManager.performSearch();
+            }
+
+            // Reset button
+            const resetBtn = document.getElementById('reset-filters');
+            if (resetBtn) {
+                resetBtn.addEventListener('click', function() {
+                    document.getElementById('search-input').value = '';
+                    document.getElementById('filter-projet').value = '';
+                    document.getElementById('filter-statut').value = '';
+                    document.getElementById('filter-priorite').value = '';
+                    document.getElementById('sort-select').value = 'date';
+                    document.getElementById('order-select').value = 'DESC';
+                    filterManager.performSearch();
+                });
+            }
+        });
+    </script>
+
+    <style>
+        .page-header-area {
+            padding: 120px 0;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+        
+        .page-header-area::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.4);
+        }
+        
+        .page-header-cont {
+            position: relative;
+            z-index: 1;
+            color: white;
+            text-align: center;
+        }
+        
+        .page-header-cont h1 {
+            font-size: 48px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .filter-section {
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .table-responsive {
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .table {
+            margin-bottom: 0;
+        }
+        
+        .table thead th {
+            border-bottom: 2px solid #ddd;
+            font-weight: bold;
+            padding: 15px;
+        }
+        
+        .table tbody td {
+            padding: 15px;
+            vertical-align: middle;
+        }
+        
+        .badge {
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+    </style>
+
+{% endblock %}

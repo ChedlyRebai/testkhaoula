@@ -1,0 +1,186 @@
+{% extends "admin/base_admin.html.twig" %}
+
+{% block title %}Admin - Tâches{% endblock %}
+
+{% block stylesheets %}
+    {# Optional CSS #}
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h1>Gestion des Tâches</h1>
+        </div>
+        <div class="col-md-4 text-end">
+            <a href="{{ path('admin_tache_new') }}" class="btn btn-primary">
+                <i class="bi bi-plus"></i> Nouvelle Tâche
+            </a>
+        </div>
+    </div>
+
+    <!-- Search & Filter Card -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <label for="search" class="form-label">Rechercher</label>
+                    <input type="text" class="form-control" id="search"
+                           value="{{ search }}" placeholder="Chercher une tâche...">
+                </div>
+                <div class="col-md-2">
+                    <label for="filter-projet" class="form-label">Projet</label>
+                    <select class="form-select" id="filter-projet">
+                        <option value="">Tous les projets</option>
+                        {% for p in projets %}
+                            <option value="{{ p.id }}" {% if projet and projet.id == p.id %}selected{% endif %}>
+                                {{ p.nom }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label for="filter-statut" class="form-label">Statut</label>
+                    <select class="form-select" id="filter-statut">
+                        <option value="">Tous les statuts</option>
+                        <option value="À faire" {% if statut == 'À faire' %}selected{% endif %}>À faire</option>
+                        <option value="En cours" {% if statut == 'En cours' %}selected{% endif %}>En cours</option>
+                        <option value="Terminée" {% if statut == 'Terminée' %}selected{% endif %}>Terminée</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label for="filter-priorite" class="form-label">Priorité</label>
+                    <select class="form-select" id="filter-priorite">
+                        <option value="">Toutes les priorités</option>
+                        <option value="1" {% if priorite == '1' %}selected{% endif %}>Basse</option>
+                        <option value="2" {% if priorite == '2' %}selected{% endif %}>Normale</option>
+                        <option value="3" {% if priorite == '3' %}selected{% endif %}>Haute</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row g-3 mt-2">
+                <div class="col-md-3">
+                    <label for="sort" class="form-label">Trier par</label>
+                    <select class="form-select" id="sort">
+                        <option value="date" {% if sort == 'date' %}selected{% endif %}>Date</option>
+                        <option value="titre" {% if sort == 'titre' %}selected{% endif %}>Titre</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="order" class="form-label">Ordre</label>
+                    <select class="form-select" id="order">
+                        <option value="DESC" {% if order == 'DESC' %}selected{% endif %}>Décroissant</option>
+                        <option value="ASC" {% if order == 'ASC' %}selected{% endif %}>Croissant</option>
+                    </select>
+                </div>
+                <div class="col-md-6 d-flex align-items-end">
+                    <button type="button" class="btn btn-outline-secondary w-100" id="reset-btn">
+                        <i class="bi bi-arrow-counterclockwise"></i> Réinitialiser
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Taches Table -->
+    <div class="card">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Titre</th>
+                        <th>Projet</th>
+                        <th>Statut</th>
+                        <th>Priorité</th>
+                        <th>Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="taches-tbody">
+                    {% if taches|length > 0 %}
+                        {% for tache in taches %}
+                        <tr>
+                            <td>
+                                <strong>{{ tache.titre }}</strong>
+                            </td>
+                            <td>
+                                <a href="{{ path('admin_taches_list', {'projet': tache.projet.id}) }}">
+                                    {{ tache.projet.nom }}
+                                </a>
+                            </td>
+                            <td>
+                                <span class="badge 
+                                    {% if tache.statut == 'À faire' %}bg-secondary
+                                    {% elseif tache.statut == 'En cours' %}bg-warning
+                                    {% elseif tache.statut == 'Terminée' %}bg-success
+                                    {% endif %}">
+                                    {{ tache.statut }}
+                                </span>
+                            </td>
+                            <td>
+                                <span class="badge 
+                                    {% if tache.priorite == 1 %}bg-success
+                                    {% elseif tache.priorite == 2 %}bg-info
+                                    {% elseif tache.priorite == 3 %}bg-danger
+                                    {% endif %}">
+                                    {% if tache.priorite == 1 %}Basse
+                                    {% elseif tache.priorite == 2 %}Normale
+                                    {% elseif tache.priorite == 3 %}Haute
+                                    {% endif %}
+                                </span>
+                            </td>
+                            <td>
+                                <small class="text-muted">{{ tache.dateCreation|date('d/m/Y') }}</small>
+                            </td>
+                            <td>
+                                <a href="{{ path('admin_tache_show', {'id': tache.id}) }}" 
+                                   class="btn btn-sm btn-info" title="Voir">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                                <a href="{{ path('admin_tache_edit', {'id': tache.id}) }}" 
+                                   class="btn btn-sm btn-warning" title="Éditer">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <form method="POST" action="{{ path('admin_tache_delete', {'id': tache.id}) }}" 
+                                      class="d-inline" onsubmit="return confirm('Êtes-vous sûr ?');">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ tache.id) }}">
+                                    <button type="submit" class="btn btn-sm btn-danger" title="Supprimer">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="6" class="text-center text-muted py-4">
+                                Aucune tâche trouvée.
+                            </td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{{ include('assets/ajax-search-init.html.twig', {
+    apiUrl: path('api_taches_search'),
+    searchInputId: 'search',
+    sortSelectId: 'sort',
+    orderSelectId: 'order',
+    resetBtnId: 'reset-btn',
+    containerSelector: '#taches-tbody',
+    entityType: 'taches',
+    additionalFilters: {
+        'filter-projet': 'projet',
+        'filter-statut': 'statut',
+        'filter-priorite': 'priorite'
+    }
+}) }}
+{% endblock %}
+
+{% block javascripts %}
+    {{ encore_entry_script_tags('app') }}
+    <script src="{{ asset('ajax-search.js') }}"></script>
+{% endblock %}

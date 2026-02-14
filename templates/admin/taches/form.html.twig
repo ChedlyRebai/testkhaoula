@@ -1,0 +1,97 @@
+{% extends "admin/base_admin.html.twig" %}
+
+{% block title %}{% if isEdit %}Éditer{% else %}Créer{% endif %} - Tâche - Admin{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <h1>{% if isEdit %}Éditer la tâche{% else %}Créer une nouvelle tâche{% endif %}</h1>
+
+            <div class="card mt-4">
+                <div class="card-body">
+                    {{ form_start(form, {'novalidate': 'novalidate'}) }}
+
+                    <div class="mb-3">
+                        {{ form_label(form.projet, 'Projet') }}
+                        {{ form_widget(form.projet, {'attr': {'class': 'form-select'}}) }}
+                        {% if form.projet.vars.errors|length > 0 %}
+                            <div class="alert alert-danger mt-1 mb-0">
+                                {% for error in form.projet.vars.errors %}
+                                    <small>{{ error.message }}</small>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-3">
+                        {{ form_label(form.titre, 'Titre') }}
+                        {{ form_widget(form.titre, {'attr': {'class': 'form-control', 'placeholder': 'Entrez le titre de la tâche'}}) }}
+                        {% if form.titre.vars.errors|length > 0 %}
+                            <div class="alert alert-danger mt-1 mb-0">
+                                {% for error in form.titre.vars.errors %}
+                                    <small>{{ error.message }}</small>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-3">
+                        {{ form_label(form.description, 'Description') }}
+                        {{ form_widget(form.description, {'attr': {'class': 'form-control', 'rows': 5, 'placeholder': 'Entrez la description de la tâche'}}) }}
+                        {% if form.description.vars.errors|length > 0 %}
+                            <div class="alert alert-danger mt-1 mb-0">
+                                {% for error in form.description.vars.errors %}
+                                    <small>{{ error.message }}</small>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                {{ form_label(form.statut, 'Statut') }}
+                                {{ form_widget(form.statut, {'attr': {'class': 'form-select'}}) }}
+                                {% if form.statut.vars.errors|length > 0 %}
+                                    <div class="alert alert-danger mt-1 mb-0">
+                                        {% for error in form.statut.vars.errors %}
+                                            <small>{{ error.message }}</small>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                {{ form_label(form.priorite, 'Priorité') }}
+                                {{ form_widget(form.priorite, {'attr': {'class': 'form-select'}}) }}
+                                {% if form.priorite.vars.errors|length > 0 %}
+                                    <div class="alert alert-danger mt-1 mb-0">
+                                        {% for error in form.priorite.vars.errors %}
+                                            <small>{{ error.message }}</small>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="{% if isEdit %}{{ path('admin_tache_show', {'id': tache.id}) }}{% else %}{{ path('admin_taches_list') }}{% endif %}" 
+                           class="btn btn-secondary">
+                            <i class="bi bi-x"></i> Annuler
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check"></i> {% if isEdit %}Mettre à jour{% else %}Créer{% endif %}
+                        </button>
+                    </div>
+
+                    {{ form_rest(form) }}
+                    {{ form_end(form) }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

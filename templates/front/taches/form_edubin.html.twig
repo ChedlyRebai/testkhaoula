@@ -1,0 +1,439 @@
+{% extends 'front/base_edubin.html.twig' %}
+
+{% block title %}{% if isEdit %}Modifier{% else %}Créer{% endif %} Tâche - EduSync{% endblock %}
+
+{% block body %}
+
+    <!--====== PAGE HEADER PART START ======-->
+    
+    <section class="page-header-area" style="background-image: url({{ asset('edubin-images/slider/s-3.jpg') }})" data-overlay="4">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="page-header-cont">
+                        <h1>{% if isEdit %}Modifier la tâche{% else %}Créer une nouvelle tâche{% endif %}</h1>
+                        <p class="text-white">Gérez vos tâches efficacement</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!--====== PAGE HEADER PART ENDS ======-->
+
+    <!--====== TASK FORM PART START ======-->
+    
+    <section class="pt-120 pb-120">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    
+                    <div class="form-card" style="background: white; padding: 40px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                        
+                        <h4 class="mb-30">
+                            {% if isEdit %}
+                                Modifier "{{ tache.titre }}"
+                            {% else %}
+                                Créer une nouvelle tâche
+                            {% endif %}
+                        </h4>
+
+                        {% for message in app.flashes('error') %}
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                <i class="fa fa-exclamation-circle"></i> {{ message }}
+                                <button type="button" class="close" data-dismiss="alert">×</button>
+                            </div>
+                        {% endfor %}
+
+                        {{ form_start(form, {'attr': {'class': 'task-form', 'novalidate': 'novalidate'}}) }}
+                        
+                        <!-- Project Selection -->
+                        <div class="form-group mb-25">
+                            {{ form_label(form.projet, 'Projet', {'label_attr': {'class': 'form-label'}}) }}
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fa fa-folder-open"></i></span>
+                                </div>
+                                {{ form_widget(form.projet, {'attr': {'class': 'form-control' ~ (form.projet.vars.errors|length > 0 ? ' is-invalid' : '')}}) }}
+                            </div>
+                            {{ form_errors(form.projet, {'attr': {'class': 'invalid-feedback d-block'}}) }}
+                        </div>
+
+                        <!-- Title Field -->
+                        <div class="form-group mb-25">
+                            {{ form_label(form.titre, 'Titre de la tâche', {'label_attr': {'class': 'form-label'}}) }}
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fa fa-tag"></i></span>
+                                </div>
+                                {{ form_widget(form.titre, {'attr': {'class': 'form-control' ~ (form.titre.vars.errors|length > 0 ? ' is-invalid' : ''), 'placeholder': 'Entrez le titre de la tâche...'}}) }}
+                            </div>
+                            {{ form_errors(form.titre, {'attr': {'class': 'invalid-feedback d-block'}}) }}
+                        </div>
+
+                        <!-- Description Field -->
+                        <div class="form-group mb-25">
+                            {{ form_label(form.description, 'Description', {'label_attr': {'class': 'form-label'}}) }}
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fa fa-align-left"></i></span>
+                                </div>
+                                {{ form_widget(form.description, {'attr': {'class': 'form-control' ~ (form.description.vars.errors|length > 0 ? ' is-invalid' : ''), 'placeholder': 'Décrivez la tâche...', 'rows': 5}}) }}
+                            </div>
+                            {{ form_errors(form.description, {'attr': {'class': 'invalid-feedback d-block'}}) }}
+                        </div>
+
+                        <!-- Status Field -->
+                        <div class="form-group mb-25">
+                            {{ form_label(form.statut, 'État', {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_widget(form.statut, {'attr': {'class': 'form-control' ~ (form.statut.vars.errors|length > 0 ? ' is-invalid' : '')}}) }}
+                            {{ form_errors(form.statut, {'attr': {'class': 'invalid-feedback d-block'}}) }}
+                        </div>
+
+                        <!-- Priority Field -->
+                        <div class="form-group mb-25">
+                            {{ form_label(form.priorite, 'Priorité', {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_widget(form.priorite, {'attr': {'class': 'form-control' ~ (form.priorite.vars.errors|length > 0 ? ' is-invalid' : '')}}) }}
+                            {{ form_errors(form.priorite, {'attr': {'class': 'invalid-feedback d-block'}}) }}
+                        </div>
+
+                        {% if form.enabled is defined %}
+                            <div class="form-group mb-30">
+                                <div class="custom-control custom-checkbox">
+                                    {{ form_widget(form.enabled, {'attr': {'class': 'custom-control-input'}}) }}
+                                    {{ form_label(form.enabled, 'Activer cette tâche', {'label_attr': {'class': 'custom-control-label'}}) }}
+                                </div>
+                            </div>
+                        {% endif %}
+
+                        {{ form_rest(form) }}
+
+                        <!-- Form Actions -->
+                        <div class="form-actions mt-40">
+                            <button type="submit" class="main-btn mr-2">
+                                <i class="fa fa-save"></i> 
+                                {% if isEdit %}Modifier la tâche{% else %}Créer la tâche{% endif %}
+                            </button>
+                            <a href="{% if isEdit %}{{ path('tache_show', {'id': tache.id}) }}{% else %}{{ path('tache_list') }}{% endif %}" class="main-btn btn-outline">
+                                <i class="fa fa-times"></i> Annuler
+                            </a>
+                        </div>
+
+                    </div>
+
+                    <!-- Info Box -->
+                    <div class="info-box" style="background: #f0f7ff; padding: 30px; border-radius: 10px; margin-top: 30px; border-left: 4px solid #667eea;">
+                        <h5 class="mb-15"><i class="fa fa-lightbulb-o"></i> Conseils pour les tâches</h5>
+                        <ul style="margin-bottom: 0; padding-left: 20px;">
+                            <li><strong>Soyez précis :</strong> Les titres clairs vous aident à rester organisé</li>
+                            <li><strong>Définissez la priorité :</strong> Les tâches haute priorité apparaissent en premier</li>
+                            <li><strong>Suivez l'état :</strong> Mettez à jour l'état en travaillant sur la tâche</li>
+                            <li><strong>Lien au projet :</strong> Organisez les tâches en les assignant à des projets</li>
+                        </ul>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!--====== TASK FORM PART ENDS ======-->
+
+    <style>
+        .page-header-area {
+            padding: 120px 0;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+        
+        .page-header-area::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.4);
+        }
+        
+        .page-header-cont {
+            position: relative;
+            z-index: 1;
+            color: white;
+            text-align: center;
+        }
+        
+        .page-header-cont h1 {
+            font-size: 48px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .form-card {
+            animation: fadeIn 0.3s ease-in;
+            overflow: visible;
+            position: relative;
+            z-index: 1100; /* ensure form sits above floating helpers */
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .form-label {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+            display: block;
+        }
+        
+        .form-control {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 12px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        
+        .form-control:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+            outline: none;
+        }
+        
+        .input-group {
+            display: flex;
+            width: 100%;
+        }
+        
+        .input-group-text {
+            padding: 12px;
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            border-right: none;
+            border-radius: 5px 0 0 5px;
+            color: #667eea;
+            font-size: 14px;
+        }
+        
+        .input-group .form-control {
+            border-radius: 0 5px 5px 0;
+            border-left: none;
+        }
+        
+        .form-control.is-invalid {
+            border-color: #dc3545;
+        }
+        
+        .form-control.is-invalid:focus {
+            border-color: #dc3545;
+            box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+        }
+        
+        .invalid-feedback {
+            color: #dc3545;
+            font-size: 13px;
+            margin-top: 5px;
+        }
+        
+        .custom-control {
+            position: relative;
+            padding-left: 1.5rem;
+            margin: 0;
+        }
+        
+        .custom-control-input {
+            position: absolute;
+            left: 0;
+            z-index: -1;
+            width: 1rem;
+            height: 1.25rem;
+            opacity: 0;
+        }
+        
+        .custom-control-label {
+            position: relative;
+            margin-bottom: 0;
+            vertical-align: top;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        
+        .custom-control-label::before {
+            position: absolute;
+            top: 0.25rem;
+            left: -1.5rem;
+            display: block;
+            width: 1rem;
+            height: 1rem;
+            pointer-events: none;
+            content: '';
+            background-color: #fff;
+            border: 1px solid #adb5bd;
+            border-radius: 0.25rem;
+        }
+        
+        .custom-radio .custom-control-label::before {
+            border-radius: 50%;
+        }
+        
+        .custom-control-input:checked ~ .custom-control-label::before {
+            color: #fff;
+            border-color: #667eea;
+            background-color: #667eea;
+        }
+        
+        .priority-options {
+            padding: 15px;
+            background: #f9f9f9;
+            border-radius: 5px;
+            border: 1px solid #e0e0e0;
+        }
+        
+        .priority-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            color: white;
+            margin-left: 10px;
+        }
+        
+        .badge-low {
+            background: #28a745;
+        }
+        
+        .badge-normal {
+            background: #ffc107;
+            color: #333;
+        }
+        
+        .badge-high {
+            background: #dc3545;
+        }
+        
+        .form-actions {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 18px;
+            width: 100%;
+            justify-content: center; /* center buttons horizontally */
+            clear: both;
+            box-sizing: border-box;
+        }
+
+        /* Ensure buttons don't overflow the card and remain visible */
+        .form-card, .form-actions { position: relative; z-index: 1000; }
+        .form-actions .main-btn { min-width: 140px; }
+
+        /* Reposition floating helpers so they don't overlap the form */
+        .back-to-top { right: 20px; bottom: 20px; z-index: 900; }
+        .support-button .button { position: fixed; right: 20px; bottom: 100px; z-index: 900; }
+        
+        .main-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 25px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+        
+        .main-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+            color: white;
+            text-decoration: none;
+        }
+        
+        .main-btn.btn-outline {
+            background: transparent;
+            border: 2px solid #667eea;
+            color: #667eea;
+        }
+        
+        .main-btn.btn-outline:hover {
+            background: #667eea;
+            color: white;
+        }
+        
+        .info-box {
+            animation: slideIn 0.4s ease-in 0.2s backwards;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        .info-box h5 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+        
+        .info-box ul li {
+            margin-bottom: 8px;
+            color: #555;
+            line-height: 1.6;
+        }
+        
+        .alert {
+            padding: 15px 20px;
+            border-radius: 5px;
+            margin-bottom: 25px;
+        }
+        
+        .alert-danger {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        
+        .alert-success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        
+        @media (max-width: 768px) {
+            .page-header-cont h1 {
+                font-size: 32px;
+            }
+            
+            .form-actions {
+                flex-direction: column;
+            }
+            
+            .main-btn {
+                width: 100%;
+                text-align: center;
+            }
+        }
+    </style>
+
+{% endblock %}

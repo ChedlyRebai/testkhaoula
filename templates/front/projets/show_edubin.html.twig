@@ -1,0 +1,491 @@
+{% extends 'front/base_edubin.html.twig' %}
+
+{% block title %}{{ projet.nom }} - EduSync{% endblock %}
+
+{% block body %}
+
+    <!--====== PAGE HEADER PART START ======-->
+    
+    <section class="page-header-area" style="background-image: url({{ asset('edubin-images/slider/s-2.jpg') }})" data-overlay="4">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="page-header-cont">
+                        <h1>{{ projet.nom }}</h1>
+                        <p class="text-white">Détails du projet</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!--====== PAGE HEADER PART ENDS ======-->
+
+    <!--====== PROJECT DETAIL PART START ======-->
+    
+    <section class="pt-120 pb-120">
+        <div class="container">
+            
+            {% for message in app.flashes('success') %}
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="fa fa-check-circle"></i> {{ message }}
+                    <button type="button" class="close" data-dismiss="alert">×</button>
+                </div>
+            {% endfor %}
+
+            <!-- Project Featured Image -->
+            <div class="row mb-50">
+                <div class="col-lg-12">
+                    <img src="{{ asset('edubin-images/course/cu-' ~ ((projet.id - 1) % 5 + 1) ~ '.jpg') }}" alt="{{ projet.nom }}" style="width: 100%; height: 300px; object-fit: cover; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                </div>
+            </div>
+
+            <div class="row">
+                <!-- Main Content -->
+                <div class="col-lg-8">
+                    <div class="project-detail-card" style="background: white; padding: 40px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin-bottom: 40px;">
+                        
+                        <!-- Project Info Section -->
+                        <div class="project-info mb-40">
+                            <div class="row mb-30">
+                                <div class="col-sm-6">
+                                    <div class="info-item">
+                                        <label class="text-muted"><strong>ID du projet</strong></label>
+                                        <p class="mt-2"><strong>#{{ projet.id }}</strong></p>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="info-item">
+                                        <label class="text-muted"><strong>Date de création</strong></label>
+                                        <p class="mt-2">{{ projet.dateCreation|date('M d, Y') }}</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row mb-30">
+                                <div class="col-sm-6">
+                                    <div class="info-item">
+                                        <label class="text-muted"><strong>État</strong></label>
+                                        <p class="mt-2">
+                                            {% if projet.enabled %}
+                                                <span class="badge badge-success" style="padding: 8px 15px; font-size: 13px;">Actif</span>
+                                            {% else %}
+                                                <span class="badge badge-secondary" style="padding: 8px 15px; font-size: 13px;">Inactif</span>
+                                            {% endif %}
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="info-item">
+                                        <label class="text-muted"><strong>Nombre total de tâches</strong></label>
+                                        <p class="mt-2"><strong>{{ projet.taches|length }}</strong></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Description -->
+                        <div class="description mb-40">
+                            <h5 class="mb-20">Description</h5>
+                            <p class="text-justify">
+                                {{ projet.description|nl2br }}
+                            </p>
+                        </div>
+
+                        <!-- Related Tasks Section -->
+                        <div class="related-tasks">
+                            <h5 class="mb-30">
+                                <i class="fa fa-tasks"></i> Tâches associées
+                                <span class="badge badge-primary" style="float: right; padding: 5px 10px;">{{ projet.taches|length }}</span>
+                            </h5>
+
+                            {% if projet.taches is empty %}
+                                <div class="alert alert-info">
+                                    <p class="mb-0">Aucune tâche créée pour ce projet pour le moment.</p>
+                                </div>
+                            {% else %}
+                                <div class="tasks-list">
+                                    {% for tache in projet.taches %}
+                                        <div class="task-item" style="padding: 15px; border: 1px solid #e0e0e0; border-radius: 5px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center;">
+                                            <div style="flex: 1;">
+                                                <a href="{{ path('tache_show', {'id': tache.id}) }}" class="task-title" style="color: #333; font-weight: 600; text-decoration: none; display: block; margin-bottom: 5px;">
+                                                    {{ tache.titre }}
+                                                </a>
+                                                <p class="text-muted small mb-0">
+                                                    Created: {{ tache.dateCreation|date('M d, Y') }}
+                                                </p>
+                                            </div>
+                                            <div style="margin-left: 15px; text-align: right;">
+                                                {% if tache.statut == 'À faire' %}
+                                                <span class="badge badge-secondary" style="padding: 5px 10px;">À faire</span>
+                                            {% elseif tache.statut == 'En cours' %}
+                                                <span class="badge badge-primary" style="padding: 5px 10px;">En cours</span>
+                                            {% elseif tache.statut == 'Terminée' %}
+                                                <span class="badge badge-success" style="padding: 5px 10px;">Terminée</span>
+                                                {% endif %}
+                                                <div style="margin-top: 5px;">
+                                                    {% if tache.priorite == 1 %}
+                                                        <span class="badge badge-success" style="padding: 3px 8px; font-size: 11px;">Basse</span>
+                                                    {% elseif tache.priorite == 2 %}
+                                                        <span class="badge badge-warning" style="padding: 3px 8px; font-size: 11px;">Normale</span>
+                                                    {% elseif tache.priorite == 3 %}
+                                                        <span class="badge badge-danger" style="padding: 3px 8px; font-size: 11px;">Haute</span>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="action-buttons mt-50">
+                            <a href="{{ path('projet_edit', {'id': projet.id}) }}" class="main-btn me-3">
+                                <i class="fa fa-pencil"></i> Modifier le projet
+                            </a>
+                            <a href="{{ path('tache_new', {'projet': projet.id}) }}" class="main-btn me-3" style="background: transparent; border: 2px solid #667eea; color: #667eea;">
+                                <i class="fa fa-plus"></i> Ajouter une tâche
+                            </a>
+                            <a href="{{ path('projet_list') }}" class="main-btn" style="background: transparent; border: 2px solid #667eea; color: #667eea;">
+                                <i class="fa fa-arrow-left"></i> Retour aux projets
+                            </a>
+                            <form method="POST" action="{{ path('projet_delete', {'id': projet.id}) }}" style="display: inline; margin-left: 10px;" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce projet? Toutes les tâches associées seront supprimées.');">
+                                <input type="hidden" name="_method" value="DELETE">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ projet.id) }}">
+                                <button type="submit" class="btn btn-outline-danger btn-sm">
+                                    <i class="fa fa-trash"></i> Supprimer
+                                </button>
+                            </form>
+                        </div>
+
+
+
+                    </div>
+                </div>
+
+                <!-- Sidebar -->
+                <div class="col-lg-4">
+                    <!-- Quick Actions Card -->
+                    <div class="sidebar-card" style="background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin-bottom: 30px;">
+                        <h5 class="mb-20">Actions rapides</h5>
+                        
+                        <a href="{{ path('tache_list', {'projet': projet.id}) }}" class="btn btn-block btn-outline-primary mb-10">
+                            <i class="fa fa-list"></i> Voir toutes les tâches
+                        </a>
+                        
+                        <a href="{{ path('tache_new', {'projet': projet.id}) }}" class="btn btn-block btn-outline-primary">
+                            <i class="fa fa-plus-circle"></i> Nouvelle tâche
+                        </a>
+                    </div>
+
+                    <!-- Project Summary Card -->
+                    <div class="project-summary" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin-bottom: 30px;">
+                        <h5 class="mb-20">Résumé du projet</h5>
+                        
+                        <div class="summary-item mb-15">
+                            <span class="summary-label" style="color: rgba(255,255,255,0.8);">Nombre de tâches</span>
+                            <p class="summary-value" style="font-size: 28px; font-weight: bold; margin: 5px 0;">
+                                {{ projet.taches|length }}
+                            </p>
+                        </div>
+
+                        {% set totalTaches = projet.taches|length %}
+                        {% set completedTaches = projet.taches|filter(t => t.statut == 'Terminée')|length %}
+                        {% set completionPercentage = totalTaches > 0 ? (completedTaches / totalTaches * 100)|round : 0 %}
+
+                        <div class="summary-item mb-15">
+                            <span class="summary-label" style="color: rgba(255,255,255,0.8);">Achèvement</span>
+                            <div style="margin-top: 8px;">
+                                <div style="background: rgba(255,255,255,0.3); border-radius: 10px; height: 8px; overflow: hidden;">
+                                    <div style="background: #4ade80; height: 100%; width: {{ completionPercentage }}%; transition: width 0.3s ease;"></div>
+                                </div>
+                                <p style="font-size: 12px; margin-top: 5px;">{{ completedTaches }}/{{ totalTaches }} ({{ completionPercentage }}%)</p>
+                            </div>
+                        </div>
+
+                        <div class="summary-item">
+                            <span class="summary-label" style="color: rgba(255,255,255,0.8);">Created</span>
+                            <p style="font-size: 14px; margin: 5px 0;">{{ projet.dateCreation|date('M d, Y') }}</p>
+                        </div>
+                    </div>
+
+                    <!-- Status Info Card -->
+                    <div class="status-card" style="background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                        <h5 class="mb-20">Status Information</h5>
+                        
+                        <div class="status-item mb-15">
+                            <label class="text-muted"><strong>Current Status</strong></label>
+                            <p class="mt-10">
+                                {% if projet.enabled %}
+                                    <span class="badge badge-success" style="padding: 8px 15px;">Active</span>
+                                {% else %}
+                                    <span class="badge badge-secondary" style="padding: 8px 15px;">Inactive</span>
+                                {% endif %}
+                            </p>
+                        </div>
+
+                        <div class="status-item">
+                            <label class="text-muted"><strong>Last Update</strong></label>
+                            <p class="mt-10">{{ projet.dateCreation|date('M d, Y H:i') }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+    
+    <!--====== PROJECT DETAIL PART ENDS ======-->
+
+    <style>
+        .page-header-area {
+            padding: 120px 0;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+        
+        .page-header-area::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.4);
+        }
+        
+        .page-header-cont {
+            position: relative;
+            z-index: 1;
+            color: white;
+            text-align: center;
+        }
+        
+        .page-header-cont h1 {
+            font-size: 48px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .project-detail-card {
+            animation: fadeIn 0.3s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .info-item {
+            margin-bottom: 15px;
+        }
+        
+        .info-item label {
+            display: block;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .info-item p {
+            margin: 0;
+            font-size: 16px;
+            color: #333;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .badge-primary {
+            background: #007bff;
+            color: white;
+        }
+        
+        .badge-success {
+            background: #28a745;
+            color: white;
+        }
+        
+        .badge-warning {
+            background: #ffc107;
+            color: #333;
+        }
+        
+        .badge-danger {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .badge-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .task-item {
+            transition: all 0.3s ease;
+            background: #f9f9f9;
+        }
+        
+        .task-item:hover {
+            background: white;
+            border-color: #667eea;
+            box-shadow: 0 2px 10px rgba(102, 126, 234, 0.2);
+        }
+        
+        .task-title:hover {
+            color: #667eea;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .main-btn {
+            display: inline-block;
+            padding: 12px 25px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .main-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+            color: white;
+            text-decoration: none;
+        }
+        
+        .text-justify {
+            text-align: justify;
+            line-height: 1.8;
+            color: #555;
+        }
+        
+        .delete-section {
+            padding-top: 30px;
+            margin-top: 40px;
+        }
+        
+        .btn-outline-danger {
+            border: 2px solid #dc3545;
+            color: #dc3545;
+            background: transparent;
+        }
+        
+        .btn-outline-danger:hover {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .sidebar-card {
+            animation: fadeInUp 0.4s ease-in 0.1s backwards;
+        }
+        
+        .project-summary {
+            animation: fadeInUp 0.4s ease-in 0.2s backwards;
+        }
+        
+        .status-card {
+            animation: fadeInUp 0.4s ease-in 0.3s backwards;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .btn-block {
+            width: 100%;
+            text-align: center;
+            display: block;
+        }
+        
+        .btn-outline-primary {
+            border: 2px solid #667eea;
+            color: #667eea;
+            background: transparent;
+            border-radius: 5px;
+            padding: 10px 15px;
+            text-decoration: none;
+            display: block;
+            transition: all 0.3s ease;
+            margin-bottom: 10px;
+        }
+        
+        .btn-outline-primary:hover {
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+        }
+        
+        .summary-item {
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        .summary-item:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+        
+        .summary-label {
+            display: block;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 500;
+        }
+        
+        .summary-value {
+            margin: 5px 0 0 0;
+            color: white;
+        }
+        
+        @media (max-width: 768px) {
+            .page-header-cont h1 {
+                font-size: 32px;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .main-btn {
+                width: 100%;
+                text-align: center;
+            }
+            
+            .task-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    </style>
+
+{% endblock %}

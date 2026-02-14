@@ -1,0 +1,342 @@
+{# Front Office Base Template - Edubin Design #}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!--====== Required meta tags ======-->
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="csrf-token" content="{{ csrf_token('') }}">
+    
+    <!--====== Title ======-->
+    <title>{% block title %}EduSync - Project & Task Management{% endblock %}</title>
+    
+    <!--====== Favicon Icon ======-->
+    <link rel="shortcut icon" href="{{ asset('edubin-images/favicon.png') }}" type="image/png">
+
+    <!--====== Slick css ======-->
+    <link rel="stylesheet" href="{{ asset('edubin-css/slick.css') }}">
+
+    <!--====== Animate css ======-->
+    <link rel="stylesheet" href="{{ asset('edubin-css/animate.css') }}">
+    
+    <!--====== Nice Select css ======-->
+    <link rel="stylesheet" href="{{ asset('edubin-css/nice-select.css') }}">
+    
+    <!--====== Nice Number css ======-->
+    <link rel="stylesheet" href="{{ asset('edubin-css/jquery.nice-number.min.css') }}">
+
+    <!--====== Magnific Popup css ======-->
+    <link rel="stylesheet" href="{{ asset('edubin-css/magnific-popup.css') }}">
+
+    <!--====== Bootstrap css ======-->
+    <link rel="stylesheet" href="{{ asset('edubin-css/bootstrap.min.css') }}">
+    
+    <!--====== Fontawesome css ======-->
+    <link rel="stylesheet" href="{{ asset('edubin-css/font-awesome.min.css') }}">
+    
+    <!--====== Default css ======-->
+    <link rel="stylesheet" href="{{ asset('edubin-css/default.css') }}">
+    
+    <!--====== Style css ======-->
+    <link rel="stylesheet" href="{{ asset('edubin-css/style.css') }}">
+    
+    <!--====== Responsive css ======-->
+    <link rel="stylesheet" href="{{ asset('edubin-css/responsive.css') }}">
+
+    {% block stylesheets %}{% endblock %}
+</head>
+
+<body>
+   
+    <!--====== PRELOADER PART START ======-->
+    <div class="preloader">
+        <div class="loader rubix-cube">
+            <div class="layer layer-1"></div>
+            <div class="layer layer-2"></div>
+            <div class="layer layer-3 color-1"></div>
+            <div class="layer layer-4"></div>
+            <div class="layer layer-5"></div>
+            <div class="layer layer-6"></div>
+            <div class="layer layer-7"></div>
+            <div class="layer layer-8"></div>
+        </div>
+    </div>
+    <!--====== PRELOADER PART ENDS ======-->
+    
+    <!--====== HEADER PART START ======-->
+    
+    <header id="header-part">
+       
+        <div class="header-top d-none d-lg-block">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="header-contact text-lg-left text-center">
+                            <ul>
+                                <li><img src="{{ asset('edubin-images/all-icon/map.png') }}" alt="icon"><span>EduSync - Project Management</span></li>
+                                <li><img src="{{ asset('edubin-images/all-icon/email.png') }}" alt="icon"><span>support@edusync.local</span></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="header-opening-time text-lg-right text-center">
+                            <p>Available 24/7 - Monday to Sunday</p>
+                        </div>
+                    </div>
+                </div> <!-- row -->
+            </div> <!-- container -->
+        </div> <!-- header top -->
+        
+        <div class="header-logo-support pt-30 pb-30">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-4 col-md-4">
+                        <div class="logo">
+                            <a href="{{ path('app_home') }}">
+                                <img src="{{ asset('assets/images/logoes.png') }}" alt="Logo" style="max-height: 50px;">
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-lg-8 col-md-8">
+                        <div class="support-button float-right d-none d-md-block">
+                            <div class="support float-left">
+                                <div class="icon">
+                                    <img src="{{ asset('edubin-images/all-icon/support.png') }}" alt="icon">
+                                </div>
+                                <div class="cont">
+                                    <p>Need Help? Contact us</p>
+                                    <span>+1 (000) 000-0000</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div> <!-- row -->
+            </div> <!-- container -->
+        </div> <!-- header logo support -->
+        
+        <div class="navigation">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-10 col-md-10 col-sm-9 col-8">
+                        <nav class="navbar navbar-expand-lg">
+                            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                                <span class="icon-bar"></span>
+                                <span class="icon-bar"></span>
+                                <span class="icon-bar"></span>
+                            </button>
+
+                            <div class="collapse navbar-collapse sub-menu-bar" id="navbarSupportedContent">
+                                <ul class="navbar-nav mr-auto">
+                                    <li class="nav-item">
+                                        <a class="{% if app.request.attributes.get('_route') == 'app_home' %}active{% endif %}" href="{{ path('app_home') }}">Accueil</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="{{ path('projet_list') }}">Projets</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="{{ path('course_list') }}">Cours</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="{{ path('event_list') }}">Événements</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="{{ path('reclamation_list') }}">Réclamations</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="{{ path('forum_list') }}">Forum</a>
+                                    </li>
+                                    {% if app.user %}
+                                    <li class="nav-item">
+                                        <a href="#">Mon compte</a>
+                                        <ul class="sub-menu">
+                                            <li><a href="#">Profil</a></li>
+                                            <li><a href="#">Settings</a></li>
+                                        </ul>
+                                    </li>
+                                    {% endif %}
+                                </ul>
+                            </div>
+                        </nav> <!-- nav -->
+                    </div>
+                    <div class="col-lg-2 col-md-2 col-sm-3 col-4">
+                        <div class="right-icon text-right">
+                            <ul>
+                                <li><a href="#" id="search"><i class="fa fa-search"></i></a></li>
+                                <li><a href="#"><i class="fa fa-bell"></i><span>0</span></a></li>
+                            </ul>
+                        </div> <!-- right icon -->
+                    </div>
+                </div> <!-- row -->
+            </div> <!-- container -->
+        </div>
+        
+    </header>
+    
+    <!--====== HEADER PART ENDS ======-->
+   
+    <!--====== SEARCH BOX PART START ======-->
+    
+    <div class="search-box">
+        <div class="serach-form">
+            <div class="closebtn">
+                <span></span>
+                <span></span>
+            </div>
+            <form action="#">
+                <input type="text" placeholder="Search by keyword">
+                <button><i class="fa fa-search"></i></button>
+            </form>
+        </div> <!-- serach form -->
+    </div>
+    
+    <!--====== SEARCH BOX PART ENDS ======-->
+
+    <!--====== CONTENT PART STARTS ======-->
+    
+    {% block body %}{% endblock %}
+    
+    <!--====== CONTENT PART ENDS ======-->
+
+    <!--====== FOOTER PART START ======-->
+    
+    <footer id="footer-part">
+        <div class="footer-top pt-40 pb-70">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-4 col-md-6 col-sm-8">
+                        <div class="footer-widget">
+                            <div class="footer-title">
+                                <h4>About EduSync</h4>
+                            </div>
+                            <div class="footer-cont">
+                                <p>EduSync is a cloud-based project management solution designed for educational institutions to manage projects, tasks, and collaborate efficiently.</p>
+                                <div class="social-icon">
+                                    <ul>
+                                        <li><a href="#"><i class="fa fa-facebook"></i></a></li>
+                                        <li><a href="#"><i class="fa fa-twitter"></i></a></li>
+                                        <li><a href="#"><i class="fa fa-linkedin"></i></a></li>
+                                        <li><a href="#"><i class="fa fa-pinterest"></i></a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md-6 col-sm-8">
+                        <div class="footer-widget">
+                            <div class="footer-title">
+                                <h4>Quick Links</h4>
+                            </div>
+                            <div class="footer-cont">
+                                <ul>
+                                    <li><a href="{{ path('app_home') }}">Home</a></li>
+                                    <li><a href="{{ path('projet_list') }}">Projects</a></li>
+                                    <li><a href="#">Contact</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6 col-sm-8">
+                        <div class="footer-widget">
+                            <div class="footer-title">
+                                <h4>Help Center</h4>
+                            </div>
+                            <div class="footer-cont">
+                                <ul>
+                                    <li><a href="#">FAQ</a></li>
+                                    <li><a href="#">Support</a></li>
+                                    <li><a href="#">Documentation</a></li>
+                                    <li><a href="#">Privacy Policy</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6 col-sm-8">
+                        <div class="footer-widget">
+                            <div class="footer-title">
+                                <h4>Newsletter</h4>
+                            </div>
+                            <div class="footer-cont">
+                                <p>Subscribe to get the latest updates and news</p>
+                                <form action="#">
+                                    <input type="email" placeholder="Your Email">
+                                    <button><i class="fa fa-paper-plane"></i></button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div> <!-- row -->
+            </div> <!-- container -->
+        </div> <!-- footer top -->
+
+        <div class="footer-bottom">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="footer-bottom-left">
+                            <p>&copy; 2026 <span>EduSync</span> All rights reserved.</p>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="footer-bottom-right text-lg-right text-center">
+                            <ul>
+                                <li><a href="#">Terms & Conditions</a></li>
+                                <li><a href="#">Privacy Policy</a></li>
+                                <li><a href="#">Cookie Policy</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div> <!-- row -->
+            </div> <!-- container -->
+        </div> <!-- footer bottom -->
+    </footer>
+    
+    <!--====== FOOTER PART ENDS ======-->
+
+    <!--====== jQuery js ======-->
+    <script src="{{ asset('edubin-js/vendor/jquery-1.12.4.min.js') }}"></script>
+    
+    <!--====== Bootstrap js ======-->
+    <script src="{{ asset('edubin-js/bootstrap.min.js') }}"></script>
+    
+    <!--====== Slick js ======-->
+    <script src="{{ asset('edubin-js/slick.min.js') }}"></script>
+    
+    <!--====== Magnific Popup js ======-->
+    <script src="{{ asset('edubin-js/jquery.magnific-popup.min.js') }}"></script>
+    
+    <!--====== Waypoints js ======-->
+    <script src="{{ asset('edubin-js/waypoints.min.js') }}"></script>
+    
+    <!--====== Counterup js ======-->
+    <script src="{{ asset('edubin-js/jquery.counterup.min.js') }}"></script>
+    
+    <!--====== Nice Select js ======-->
+    <script src="{{ asset('edubin-js/jquery.nice-select.min.js') }}"></script>
+    
+    <!--====== Nice Number js ======-->
+    <script src="{{ asset('edubin-js/jquery.nice-number.min.js') }}"></script>
+    
+    <!--====== Count Down js ======-->
+    <script src="{{ asset('edubin-js/jquery.countdown.min.js') }}"></script>
+    
+    <!--====== Validator js ======-->
+    <script src="{{ asset('edubin-js/validator.min.js') }}"></script>
+    
+    <!--====== Ajax Contact js ======-->
+    <script src="{{ asset('edubin-js/ajax-contact.js') }}"></script>
+    
+    <!--====== Main js ======-->
+    <script src="{{ asset('edubin-js/main.js') }}"></script>
+
+    <!--====== Filter Search js ======-->
+    <script src="{{ asset('filter-search.js') }}"></script>
+
+    <!--====== AJAX Search Manager js ======-->
+    <script src="{{ asset('ajax-search.js') }}"></script>
+
+    {% block javascripts %}{% endblock %}
+
+</body>
+</html>

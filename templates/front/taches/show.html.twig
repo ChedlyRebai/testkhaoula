@@ -1,0 +1,111 @@
+{% extends 'front/base_edubin.html.twig' %}
+
+{% block title %}{{ tache.titre }} - EduSync{% endblock %}
+
+{% block body %}
+
+    <!--====== PAGE HEADER PART START ======-->
+    
+    <section class="page-header-area" style="background-image: url({{ asset('edubin-images/slider/s-2.jpg') }})" data-overlay="4">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="page-header-cont">
+                        <h1>{{ tache.titre }}</h1>
+                        <p class="text-white">Détails de la tâche</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!--====== PAGE HEADER PART ENDS ======-->
+
+    <!--====== TASK DETAIL PART START ======-->
+    
+    <section class="pt-120 pb-120">
+        <div class="container">
+            
+            {% for message in app.flashes('success') %}
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="fa fa-check-circle"></i> {{ message }}
+                    <button type="button" class="close" data-dismiss="alert">×</button>
+                </div>
+            {% endfor %}
+
+            <div class="row">
+                <div class="col-lg-8">
+                    <div class="task-detail-card" style="background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin-bottom: 30px;">
+                        <div class="task-detail-header mb-20">
+                            <h3 class="mb-0">{{ tache.titre }}</h3>
+                            <div class="task-actions mt-2">
+                                <a href="{{ path('tache_edit', {'id': tache.id}) }}" class="main-btn me-2"><i class="fa fa-edit"></i> Modifier</a>
+                                <form method="POST" action="{{ path('tache_delete', {'id': tache.id}) }}" style="display:inline;">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ tache.id) }}">
+                                    <button type="submit" class="btn btn-outline-danger btn-sm" onclick="return confirm('Êtes-vous sûr?')"><i class="fa fa-trash"></i> Supprimer</button>
+                                </form>
+                            </div>
+                        </div>
+
+                        <div class="row mb-20">
+                            <div class="col-md-12">
+                                <p><strong>Projet:</strong> <a href="{{ path('projet_show', {'id': tache.projet.id}) }}">{{ tache.projet.nom }}</a></p>
+                            </div>
+                        </div>
+
+                        <div class="row mb-20">
+                            <div class="col-md-6">
+                                <p><strong>Statut:</strong>
+                                    {% if tache.statut == 'À faire' %}
+                                        <span class="badge badge-secondary">À faire</span>
+                                    {% elseif tache.statut == 'En cours' %}
+                                        <span class="badge badge-primary">En cours</span>
+                                    {% elseif tache.statut == 'Terminée' %}
+                                        <span class="badge badge-success">Terminée</span>
+                                    {% else %}
+                                        <span class="badge badge-warning">{{ tache.statut }}</span>
+                                    {% endif %}
+                                </p>
+                            </div>
+                            <div class="col-md-6">
+                                <p><strong>Priorité:</strong>
+                                    {% if tache.priorite == 1 %}
+                                        <span class="badge badge-success">Basse</span>
+                                    {% elseif tache.priorite == 2 %}
+                                        <span class="badge badge-warning">Normale</span>
+                                    {% elseif tache.priorite == 3 %}
+                                        <span class="badge badge-danger">Haute</span>
+                                    {% endif %}
+                                </p>
+                            </div>
+                        </div>
+
+                        <hr>
+
+                        <h5>Description</h5>
+                        <p class="text-justify">{{ tache.description|nl2br }}</p>
+                    </div>
+                </div>
+
+                <div class="col-lg-4">
+                    <div class="card summary-card" style="background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                        <h5 class="mb-3">Informations</h5>
+                        <p class="mb-2"><i class="fa fa-clock-o"></i> Créé le: {{ tache.dateCreation|date('M d, Y H:i') }}</p>
+                        <p class="mb-2"><i class="fa fa-folder"></i> Projet: <a href="{{ path('projet_show', {'id': tache.projet.id}) }}">{{ tache.projet.nom }}</a></p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+    
+    <!--====== TASK DETAIL PART ENDS ======-->
+
+    <style>
+        .page-header-area { padding: 120px 0; background-size: cover; background-position: center; position: relative; }
+        .page-header-area::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.4); }
+        .page-header-cont { position: relative; z-index: 1; color: white; text-align: center; }
+        .task-detail-card { animation: fadeIn 0.3s ease-in; }
+    </style>
+
+{% endblock %}
