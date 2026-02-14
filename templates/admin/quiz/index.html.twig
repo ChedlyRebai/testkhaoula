@@ -1,0 +1,58 @@
+{% extends 'admin/base_admin.html.twig' %}
+
+{% block title %}Liste des quiz{% endblock %}
+
+{% block admin_content %}
+    <h2>Liste des quiz</h2>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Titre</th>
+                <th>Description</th>
+                <th>Questions</th>
+                <th>Date création</th>
+                <th>Date échéance</th>
+                <th>Durée</th>
+                <th>Score max</th>
+                <th>Tentatives max</th>
+                <th>Cours associé</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+{% for quiz in quizzes %}
+ <tr> <td>{{ quiz.id }}</td>
+  <td>{{ quiz.titre }}</td> 
+  <td>{{ quiz.description }}</td> 
+<td>
+    {% if quiz.questions is not empty %}
+        <ul>
+        {% for question in quiz.questions %}
+            <li>{{ question }}</li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        Aucune question
+    {% endif %}
+</td>
+
+
+   <td>{{ quiz.dateCreation|date('d/m/Y H:i', 'Africa/Tunis') }}</td> <td>{{ quiz.dateEcheance|date('d/m/Y H:i', 'Africa/Tunis') }}</td>
+   <td>{{ quiz.duree }}</td> 
+   <td>{{ quiz.scoreMax }}</td>
+   <td>{{ quiz.tentatives }}</td>
+   <td>{{ quiz.relation ? quiz.relation.titre : 'Aucun cours' }}</td> 
+
+
+
+     
+    
+    <td> <a href="{{ path('app_quiz_edit', {id_quiz: quiz.id}) }}" class="btn btn-warning">Modifier</a> <form method="post" action="{{ path('app_quiz_delete', {'id_quiz': quiz.id}) }}" onsubmit="return confirm('Voulez-vous vraiment supprimer ce quiz ?');" style="display:inline"> <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ quiz.id) }}"> <button class="btn btn-danger">Supprimer</button> </form> </td>
+ </tr> {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('admin_quiz_new') }}" class="btn btn-success">➕ Créer un nouveau quiz</a>
+{% endblock %}

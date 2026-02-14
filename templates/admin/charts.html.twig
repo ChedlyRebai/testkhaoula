@@ -1,0 +1,25 @@
+{% extends 'admin/base_admin.html.twig' %}
+
+{% block admin_content %}
+  <h1>Charts Page</h1>
+  <p>Voici la page des graphiques du dashboard.</p>
+
+  <!-- Exemple avec Chart.js -->
+  <canvas id="myChart" width="400" height="200"></canvas>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    const ctx = document.getElementById('myChart').getContext('2d');
+    const myChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May'],
+            datasets: [{
+                label: 'Nombre d’utilisateurs',
+                data: [12, 19, 3, 5, 2],
+                backgroundColor: 'rgba(54, 162, 235, 0.6)'
+            }]
+        }
+    });
+  </script>
+{% endblock %}

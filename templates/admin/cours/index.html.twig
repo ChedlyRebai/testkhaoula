@@ -1,0 +1,79 @@
+{% extends 'admin/base_admin.html.twig' %}
+
+{% block title %}Liste des cours{% endblock %}
+
+{% block admin_content %}
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1 class="h3 text-gray-800">📚 Liste des cours</h1>
+        <a href="{{ path('admin_cours_new') }}" class="btn btn-success">
+            ➕ Créer un nouveau cours
+        </a>
+    </div>
+
+    <div class="card shadow mb-4">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover table-striped align-middle">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Id</th>
+                            <th>Titre</th>
+                            <th>Description</th>
+                            <th>Date création</th>
+                            <th>Date publication</th>
+                            <th>Visibilité</th>
+                            <th>Contenu</th>
+                            <th>Type contenu</th>
+                            <th>URL contenu</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for cours in cours %}
+                        <tr>
+                            <td>{{ cours.idCours }}</td>
+                            <td><strong>{{ cours.titre }}</strong></td>
+                            <td>{{ cours.description|length > 50 ? cours.description|slice(0,50) ~ '...' : cours.description }}</td>
+                            <td>{{ cours.dateCreation|date('d/m/Y H:i') }}</td>
+                            <td>{{ cours.datePublication ? cours.datePublication|date('d/m/Y H:i') : '-' }}</td>
+                            <td>
+                                {% if cours.visibilite %}
+                                    <span class="badge bg-success">Visible</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">Caché</span>
+                                {% endif %}
+                            </td>
+                                                        <td>{{ cours.contenu }}</td>
+                            <td>{{ cours.typeContenu }}</td>
+                            <td>
+                                {% if cours.urlContenu %}
+                                    <a href="{{ cours.urlContenu }}" target="_blank" class="text-decoration-none">
+                                        🔗 Lien
+                                    </a>
+                                {% else %}
+                                    -
+                                {% endif %}
+                            </td>
+                            <td>
+                                <a href="{{ path('admin_cours_edit', {'id_cours': cours.idCours}) }}" class="btn btn-sm btn-warning">✏️ Modifier</a>
+                                <form method="post" action="{{ path('admin_cours_delete', {'id_cours': cours.idCours}) }}" style="display:inline" onsubmit="return confirm('Supprimer ce cours ?');">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ cours.idCours) }}">
+                                    <button class="btn btn-sm btn-danger">🗑️ Supprimer</button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="7" class="text-center text-muted">Aucun cours trouvé</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+

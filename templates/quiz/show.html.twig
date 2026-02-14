@@ -1,0 +1,40 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Détails du quiz{% endblock %}
+
+{% block body %}
+    <h1>Détails du quiz</h1>
+
+    <table class="table">
+        <tbody>
+            <tr><th>Id</th><td>{{ quiz.idQuiz }}</td></tr>
+            <tr><th>Titre</th><td>{{ quiz.titre }}</td></tr>
+            <tr><th>Description</th><td>{{ quiz.description }}</td></tr>
+           <p><strong>Questions :</strong></p>
+<td>
+    {% if quiz.questions is not empty %}
+        <ul>
+        {% for question in quiz.questions %}
+            <li>{{ question }}</li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        Aucune question
+    {% endif %}
+</td>
+
+
+
+            <td>{{ quiz.dateCreation|date('d/m/Y H:i', 'Africa/Tunis') }}</td>
+            <tr><th>Date échéance</th><td>{{ quiz.dateEcheance ? quiz.dateEcheance|date('Y-m-d H:i') : '' }}</td></tr>
+            <tr><th>Durée</th><td>{{ quiz.duree }}</td></tr>
+            <tr><th>Score maximum</th><td>{{ quiz.scoreMax }}</td></tr>
+            <tr><th>Tentatives</th><td>{{ quiz.tentatives }}</td></tr>
+            <tr><th>Cours associé</th><td>{{ quiz.relation ? quiz.relation.titre : 'Aucun cours' }}</td></tr>
+        </tbody>
+    </table>
+
+<form method="post" action="{{ path('app_quiz_delete', {'id_quiz': quiz.idQuiz}) }}" onsubmit="return confirm('Voulez-vous vraiment supprimer ce quiz ?');" style="display:inline"> <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ quiz.idQuiz) }}"> <button class="btn btn-danger">Supprimer</button> </form>
+    
+{% endblock %}
+

@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier cours{% endblock %}
+
+{% block body %}
+<h1>Modifier le cours</h1>
+
+{{ form_start(form, { attr: { novalidate: 'novalidate' } }) }}
+
+    {{ form_row(form.titre) }}
+    {{ form_row(form.description) }}
+    {{ form_row(form.date_publication) }}
+    {{ form_row(form.visibilite) }}
+    {{ form_row(form.contenu) }}
+    {{ form_row(form.type_contenu) }}
+    {{ form_row(form.url_contenu) }}
+
+    <button class="btn btn-success">
+        {{ button_label|default('Mettre à jour') }}
+    </button>
+
+{{ form_end(form) }}
+
+<a href="{{ path('app_cours_index') }}">Retour à la liste</a>
+{% endblock %}
+

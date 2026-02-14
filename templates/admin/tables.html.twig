@@ -1,0 +1,32 @@
+{% extends 'admin/base_admin.html.twig' %}
+
+{% block admin_content %}
+  <h1>Tables Page</h1>
+  <p>Voici la page des tables du dashboard.</p>
+
+  <!-- Exemple de tableau -->
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Nom</th>
+        <th>Email</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td>Wala</td>
+        <td>wala@example.com</td>
+        <td><button class="btn btn-sm btn-primary">Edit</button></td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td>Alex</td>
+        <td>alex@example.com</td>
+        <td><button class="btn btn-sm btn-danger">Delete</button></td>
+      </tr>
+    </tbody>
+  </table>
+{% endblock %}

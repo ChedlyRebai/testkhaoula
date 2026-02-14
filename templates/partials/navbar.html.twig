@@ -1,0 +1,76 @@
+<header id="header-part">
+    <div class="header-top d-none d-lg-block">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="header-contact text-lg-left text-center">
+                        <ul>
+                            <li><img src="{{ asset('assets/front/images/all-icon/map.png') }}" alt="icon"><span>127/5 Mark street, New york</span></li>
+                            <li><img src="{{ asset('assets/front/images/all-icon/email.png') }}" alt="icon"><span>info@yourmail.com</span></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="header-opening-time text-lg-right text-center">
+                        <p>Opening Hours : Monday to Saturday - 8 Am to 5 Pm</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-logo-support pt-30 pb-30">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-2 col-md-2">
+                    <div class="logo">
+                        <a href="{{ path('app_hello') }}">
+                            <img src="{{ asset('assets/front/images/logo.png') }}" alt="Logo">
+                        </a>
+                    </div>
+                </div>
+                <div class="col-lg-8 col-md-8">
+                    <div class="support-button float-right d-none d-md-block">
+                        <div class="support float-left">
+                            <div class="icon">
+                                <img src="{{ asset('assets/front/images/all-icon/support.png') }}" alt="icon">
+                            </div>
+                            <div class="cont">
+                                <p>Need Help? call us free</p>
+                                <span>321 325 5678</span>
+                            </div>
+                        </div>
+                        <div class="button float-left">
+                            <a href="#" class="main-btn">Apply Now</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="navigation">
+        <div class="container">
+            <nav class="navbar navbar-expand-lg">
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+
+                <div class="collapse navbar-collapse sub-menu-bar" id="navbarSupportedContent">
+                    <ul class="navbar-nav mr-auto">
+                        <li class="nav-item"><a href="{{ path('app_hello') }}">Home</a></li>
+                        <li class="nav-item"><a href="{{ path('app_about') }}">About us</a></li>
+                        <li class="nav-item"><a href="{{ path('app_courses') }}">Courses</a></li>
+                        <li class="nav-item"><a href="{{ path('app_events') }}">Events</a></li>
+                        <li class="nav-item"><a href="{{ path('app_teachers') }}">Our teachers</a></li>
+                        <li class="nav-item"><a href="{{ path('app_blog') }}">Blog</a></li>
+                        <li class="nav-item"><a href="{{ path('app_shop') }}">Shop</a></li>
+                        
+                    </ul>
+                </div>
+            </nav>
+        </div>
+    </div>
+</header>

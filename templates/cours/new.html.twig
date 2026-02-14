@@ -1,0 +1,85 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Créer un cours{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h3 class="mb-0">📘 Créer un nouveau cours</h3>
+        </div>
+        <div class="card-body">
+            {{ form_start(form, { attr: { novalidate: 'novalidate', class: 'needs-validation' } }) }}
+
+            <div class="mb-3">
+                {{ form_label(form.titre, 'Titre du cours', {'label_attr': {'class': 'form-label fw-bold'}}) }}
+                {{ form_widget(form.titre, {'attr': {'class': 'form-control'}}) }}
+                <div style="color: red; font-weight: bold; font-size: 0.75rem; margin-top: 0.25rem;">
+                    {{ form_errors(form.titre) }}
+                </div>
+            </div>
+
+            <div class="mb-3">
+                {{ form_label(form.description, 'Description', {'label_attr': {'class': 'form-label fw-bold'}}) }}
+                {{ form_widget(form.description, {'attr': {'class': 'form-control', 'rows': 4}}) }}
+                <div style="color: red; font-weight: bold; font-size: 0.75rem; margin-top: 0.25rem;">
+                    {{ form_errors(form.description) }}
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    {{ form_label(form.date_publication, 'Date de publication', {'label_attr': {'class': 'form-label fw-bold'}}) }}
+                    {{ form_widget(form.date_publication, {'attr': {'class': 'form-control'}}) }}
+                    <div style="color: red; font-weight: bold; font-size: 0.75rem; margin-top: 0.25rem;">
+                        {{ form_errors(form.date_publication) }}
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="form-check mb-3">
+                {{ form_widget(form.visibilite, {'attr': {'class': 'form-check-input'}}) }}
+                {{ form_label(form.visibilite, 'Visibilité', {'label_attr': {'class': 'form-check-label fw-bold'}}) }}
+                <div style="color: red; font-weight: bold; font-size: 0.75rem;  margin-top: 0.25rem;">
+                    {{ form_errors(form.visibilite) }}
+                </div>
+            </div>
+
+            <div class="mb-3">
+                {{ form_label(form.contenu, 'Contenu', {'label_attr': {'class': 'form-label fw-bold'}}) }}
+                {{ form_widget(form.contenu, {'attr': {'class': 'form-control'}}) }}
+                <div style="color: red; font-weight: bold; font-size: 0.75rem; margin-top: 0.25rem;">
+                    {{ form_errors(form.contenu) }}
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    {{ form_label(form.type_contenu, 'Type de contenu', {'label_attr': {'class': 'form-label fw-bold'}}) }}
+                    {{ form_widget(form.type_contenu, {'attr': {'class': 'form-control'}}) }}
+                    <div style="color: red; font-weight: bold; font-size: 0.75rem;margin-top: 0.25rem;">
+                        {{ form_errors(form.type_contenu) }}
+                    </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    {{ form_label(form.url_contenu, 'URL du contenu', {'label_attr': {'class': 'form-label fw-bold'}}) }}
+                    {{ form_widget(form.url_contenu, {'attr': {'class': 'form-control'}}) }}
+                    <div style="color: red; font-weight: bold; font-size: 0.75rem; margin-top: 0.25rem;">
+                        {{ form_errors(form.url_contenu) }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-between mt-4">
+                <a href="{{ path('app_cours_index') }}" class="btn btn-secondary">⬅️ Retour à la liste</a>
+                <button class="btn btn-success">💾 Enregistrer</button>
+            </div>
+
+            {{ form_end(form) }}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
